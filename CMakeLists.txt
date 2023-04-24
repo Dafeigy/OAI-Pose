@@ -849,7 +849,20 @@ set(SCHED_SRC_NR_UE
 add_library(SCHED_NR_UE_LIB ${SCHED_SRC_NR_UE})
 target_link_libraries(SCHED_NR_UE_LIB PRIVATE asn1_lte_rrc_hdrs asn1_nr_rrc_hdrs)
 
+find_package(Protobuf REQUIRED)
+if (PROTOBUF_FOUND)
+    message("protobuf found")
+else ()
+    message(FATAL_ERROR "Cannot find Protobuf")
+endif ()
 
+set(protobuf_generated_dir ${OPENAIR_BIN_DIR})
+set(SRS_TRAN_MSG_DIR ${OPENAIR1_DIR}/SCHED_NR/MESSAGES )
+set(SRS_TRAN_MSG_FILES
+  ${SRS_TRAN_MSG_DIR}/ srs-info.proto
+  )
+
+execute_process(COMMAND protoc -I ${SRS_TRAN_MSG_FILES} --cpp_out ${SRS_TRAN_MSG_DIR} --python_out ${SRS_TRAN_MSG_DIR})
 # nFAPI
 #################################
 set(NFAPI_COMMON_SRC
