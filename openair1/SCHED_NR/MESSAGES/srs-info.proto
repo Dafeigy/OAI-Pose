@@ -1,0 +1,10 @@
+syntax = "proto2";
+package protocol;
+message NR_SRS_IQ_EST {
+  repeated CHANNLE_EST CHANNLE_EST_LIST = 4;
+}
+
+message CHANNLE_EST {
+  required int32 image = 1;
+  required int32 real  = 2;
+}
