@@ -863,6 +863,7 @@ set(SRS_TRAN_MSG_FILES
   )
 
 execute_process(COMMAND protoc -I ${SRS_TRAN_MSG_FILES} --cpp_out ${SRS_TRAN_MSG_DIR} --python_out ${SRS_TRAN_MSG_DIR})
+execute_process(COMMAND protoc-c -I ${SRS_TRAN_MSG_FILES} --c_out ${SRS_TRAN_MSG_DIR})
 # nFAPI
 #################################
 set(NFAPI_COMMON_SRC
