@@ -625,7 +625,7 @@ void fill_ul_rb_mask(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx) {
   }
 
   for (int i = 0; i < gNB->max_nb_srs; i++) {
-    NR_gNB_SRS_t *srs = &gNB->srs[i];
+    NR_gNB_SRS_t *srs = &gNB->srs[i]; 
     if (srs) {
       if ((srs->active == 1) && (srs->frame == frame_rx) && (srs->slot == slot_rx)) {
         nfapi_nr_srs_pdu_t *srs_pdu = &srs->srs_pdu;
@@ -921,10 +921,12 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
     }
   }
 
+    // SRS 信息获取
   for (int i = 0; i < gNB->max_nb_srs; i++) {
-    NR_gNB_SRS_t *srs = &gNB->srs[i];
-    if (srs) {
+    NR_gNB_SRS_t *srs = &gNB->srs[i]; // srs是指向gNB中第i个srs地址的指针
+    if (srs) {//如果该块srs非空则执行下面语句
       if ((srs->active == 1) && (srs->frame == frame_rx) && (srs->slot == slot_rx)) {
+        // srs此时状态激活 且 srs帧和frame_rx相同?? 然后时隙相同 ??
         LOG_D(NR_PHY, "(%d.%d) gNB is waiting for SRS, id = %i\n", frame_rx, slot_rx, i);
 
         start_meas(&gNB->rx_srs_stats);
