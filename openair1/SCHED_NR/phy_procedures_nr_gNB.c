@@ -941,17 +941,23 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         int8_t snr_per_rb[srs_pdu->bwp_size];
         int8_t snr = 0;
 
+        // 由于配置是恒定的，因此只需要产生一次SRS信号即可，插死你哼的结果放在nr_srs_info的srs_generated_signal
         start_meas(&gNB->generate_srs_stats);
         if (check_srs_pdu(srs_pdu, &gNB->nr_srs_info[i]->srs_pdu) == 0) {
           generate_srs_nr(srs_pdu, frame_parms, gNB->nr_srs_info[i]->srs_generated_signal, 0, gNB->nr_srs_info[i], AMP, frame_rx, slot_rx);
         }
         stop_meas(&gNB->generate_srs_stats);
 
+
         start_meas(&gNB->get_srs_signal_stats);
         int srs_est = nr_get_srs_signal(gNB, frame_rx, slot_rx, srs_pdu, gNB->nr_srs_info[i], srs_received_signal);
         stop_meas(&gNB->get_srs_signal_stats);
-
+        
         if (srs_est >= 0) {
+          //对srs_received_signal进行信道估计
+          //得到FrequencyDomain/TimeDomain的估计数组
+          //int32_t srs_estimated_channel_freq[frame_parms->nb_antennas_rx][1 << srs_pdu->num_ant_ports][frame_parms->ofdm_symbol_size * N_symb_SRS]
+          //int32_t srs_estimated_channel_freq[frame_parms->nb_antennas_rx][1 << srs_pdu->num_ant_ports][frame_parms->ofdm_symbol_size * N_symb_SRS]
           start_meas(&gNB->srs_channel_estimation_stats);
           nr_srs_channel_estimation(gNB,
                                     frame_rx,
@@ -967,7 +973,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                                     &snr);
           stop_meas(&gNB->srs_channel_estimation_stats);
         }
-
+        // 信噪比snr在上面的nr_srs_channel_estimation已经重新计算，低于阈值的不会考虑二十直接重置srs_est
         if ((snr * 10) < gNB->srs_thres) {
           srs_est = -1;
         }
@@ -1020,7 +1026,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         }
         srs_indication->report_type = srs_pdu->srs_parameters_v4.report_type[0];
 
-#ifdef SRS_IND_DEBUG
+// #ifdef SRS_IND_DEBUG
         LOG_I(NR_PHY, "gNB->UL_INFO.srs_ind.sfn = %i\n", gNB->UL_INFO.srs_ind.sfn);
         LOG_I(NR_PHY, "gNB->UL_INFO.srs_ind.slot = %i\n", gNB->UL_INFO.srs_ind.slot);
         LOG_I(NR_PHY, "srs_indication->rnti = %04x\n", srs_indication->rnti);
@@ -1028,7 +1034,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         LOG_I(NR_PHY, "srs_indication->timing_advance_offset_nsec = %i\n", srs_indication->timing_advance_offset_nsec);
         LOG_I(NR_PHY, "srs_indication->srs_usage = %i\n", srs_indication->srs_usage);
         LOG_I(NR_PHY, "srs_indication->report_type = %i\n", srs_indication->report_type);
-#endif
+// #endif
 
         nfapi_srs_report_tlv_t *report_tlv = &srs_indication->report_tlv;
         report_tlv->tag = 0;
