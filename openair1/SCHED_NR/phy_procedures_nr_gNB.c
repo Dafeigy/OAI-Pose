@@ -1090,7 +1090,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                                     &gNB->frame_parms,
                                     srs_estimated_channel_freq);
 
-#ifdef SRS_IND_DEBUG
+// #ifdef SRS_IND_DEBUG
             LOG_I(NR_PHY, "nr_srs_channel_iq_matrix.normalized_iq_representation = %i\n", nr_srs_channel_iq_matrix.normalized_iq_representation);
             LOG_I(NR_PHY, "nr_srs_channel_iq_matrix.num_gnb_antenna_elements = %i\n", nr_srs_channel_iq_matrix.num_gnb_antenna_elements);
             LOG_I(NR_PHY, "nr_srs_channel_iq_matrix.num_ue_srs_ports = %i\n", nr_srs_channel_iq_matrix.num_ue_srs_ports);
@@ -1113,7 +1113,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                 }
               }
             }
-#endif
+// #endif
 
             report_tlv->length = pack_nr_srs_normalized_channel_iq_matrix(&nr_srs_channel_iq_matrix, report_tlv->value, sizeof(report_tlv->value));
             stop_meas(&gNB->srs_iq_matrix_stats);
