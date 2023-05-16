@@ -941,7 +941,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         int8_t snr_per_rb[srs_pdu->bwp_size];
         int8_t snr = 0;
 
-        // 由于配置是恒定的，因此只需要产生一次SRS信号即可，插死你哼的结果放在nr_srs_info的srs_generated_signal
+        // 由于配置是恒定的，因此只需要产生一次SRS信号即可，产生的结果放在nr_srs_info的srs_generated_signal
         start_meas(&gNB->generate_srs_stats);
         if (check_srs_pdu(srs_pdu, &gNB->nr_srs_info[i]->srs_pdu) == 0) {
           generate_srs_nr(srs_pdu, frame_parms, gNB->nr_srs_info[i]->srs_generated_signal, 0, gNB->nr_srs_info[i], AMP, frame_rx, slot_rx);
