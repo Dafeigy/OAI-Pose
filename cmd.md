@@ -17,5 +17,5 @@ cd cmake_targets
 cd ~/openairinterface5g
 source oaienv
 cd cmake_targets/ran_build/build
-sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf --sa -E --continuous-tx
+sudo ./nr-softmodem -O ../../../srs.conf --sa -E --continuous-tx
 ```
