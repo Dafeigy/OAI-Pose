@@ -8,7 +8,7 @@ cd ~/openairinterface5g/cmake_targets
 cd ~/openairinterface5g
 source oaienv
 cd cmake_targets
-./build_oai -w USRP --ninja --gNB -c
+sudo ./build_oai -w USRP --ninja --gNB -c
 ```
 # Run OAI gNB
 

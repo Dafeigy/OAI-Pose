@@ -702,6 +702,7 @@ include_directories("${NFAPI_DIR}/nfapi/inc")
 include_directories("${NFAPI_DIR}/sim_common/inc")
 include_directories("${NFAPI_DIR}/pnf_sim/inc")
 include_directories("${OPENAIR1_DIR}")
+include_directories("${OPENAIR1_DIR}/SCHED_NR/MESSAGES")
 include_directories("${OPENAIR2_DIR}")
 include_directories("${OPENAIR3_DIR}/NAS/TOOLS")
 include_directories("${OPENAIR2_DIR}/ENB_APP")
@@ -861,9 +862,8 @@ set(SRS_TRAN_MSG_DIR ${OPENAIR1_DIR}/SCHED_NR/MESSAGES )
 set(SRS_TRAN_MSG_FILES
   ${SRS_TRAN_MSG_DIR}/ srs-info.proto
   )
-
-execute_process(COMMAND protoc -I ${SRS_TRAN_MSG_FILES} --cpp_out ${SRS_TRAN_MSG_DIR} --python_out ${SRS_TRAN_MSG_DIR})
-execute_process(COMMAND protoc-c -I ${SRS_TRAN_MSG_FILES} --c_out ${SRS_TRAN_MSG_DIR})
+execute_process(COMMAND protoc -I ${SRS_TRAN_MSG_FILES} --c_out ${SRS_TRAN_MSG_DIR} --python_out ${SRS_TRAN_MSG_DIR})
+include_directories(${OPENAIR_DIR}/protobuf-c)
 # nFAPI
 #################################
 set(NFAPI_COMMON_SRC
@@ -2272,12 +2272,16 @@ add_executable(nr-softmodem
   ${OPENAIR1_DIR}/PHY/TOOLS/phy_scope_interface.c
   ${T_SOURCE}
   ${SHLIB_LOADER_SOURCES}
+  ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/srs-info.pb-c.h
+  ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/srs-info.pb-c.c
+  ${OPENAIR_DIR}/protobuf-c/protobuf-c/protobuf-c.c
+  ${OPENAIR_DIR}/protobuf-c/protobuf-c/protobuf-c.h
   )
 
 target_link_libraries(nr-softmodem PRIVATE
   -Wl,--start-group
   UTIL HASHTABLE SCTP_CLIENT SCHED_LIB SCHED_RU_LIB SCHED_NR_LIB PHY_NR PHY PHY_COMMON PHY_NR_COMMON PHY_RU GTPV1U SECU_CN SECU_OSA
-  ITTI ${NAS_UE_LIB} lte_rrc nr_rrc
+  ITTI ${NAS_UE_LIB} ${PROTOBUF_LIBRARIES} lte_rrc nr_rrc
   ngap s1ap L2_LTE_NR L2_NR MAC_NR_COMMON NFAPI_COMMON_LIB NFAPI_LIB NFAPI_VNF_LIB NFAPI_PNF_LIB NFAPI_USER_LIB SIMU SIMU_ETH
   x2ap f1ap m2ap m3ap e1ap
   -Wl,--end-group z dl)
