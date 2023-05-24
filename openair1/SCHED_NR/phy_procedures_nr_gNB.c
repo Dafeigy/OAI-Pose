@@ -48,6 +48,10 @@
 
 //#define DEBUG_RXDATA
 //#define SRS_IND_DEBUG
+// For SRS transport
+#define TRANSPORT_ADDR "192.168.0.139"
+#define TRANSPORT_PORT 7777
+
 
 uint8_t SSB_Table[38]={0,2,4,6,8,10,12,14,254,254,16,18,20,22,24,26,28,30,254,254,32,34,36,38,40,42,44,46,254,254,48,50,52,54,56,58,60,62};
 
@@ -1147,8 +1151,8 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
             }
             struct sockaddr_in ser;
             ser.sin_family = AF_INET;
-            ser.sin_port = htons(7777);
-            ser.sin_addr.s_addr = inet_addr("10.25.18.205");
+            ser.sin_port = htons(TRANSPORT_PORT);
+            ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
             sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
             close(sockfd);
             free(channel_est);
