@@ -22,3 +22,7 @@ tags
 nfapi_nr_interface_scf
 *.log
 *.out
+
+# protobuf source code 
+protobuf
+protobuf-c

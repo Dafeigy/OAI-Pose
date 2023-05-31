@@ -1032,7 +1032,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         }
         srs_indication->report_type = srs_pdu->srs_parameters_v4.report_type[0];
 
-// #ifdef SRS_IND_DEBUG
+#ifdef SRS_IND_DEBUG
         LOG_I(NR_PHY, "gNB->UL_INFO.srs_ind.sfn = %i\n", gNB->UL_INFO.srs_ind.sfn);
         LOG_I(NR_PHY, "gNB->UL_INFO.srs_ind.slot = %i\n", gNB->UL_INFO.srs_ind.slot);
         LOG_I(NR_PHY, "srs_indication->rnti = %04x\n", srs_indication->rnti);
@@ -1040,7 +1040,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         LOG_I(NR_PHY, "srs_indication->timing_advance_offset_nsec = %i\n", srs_indication->timing_advance_offset_nsec);
         LOG_I(NR_PHY, "srs_indication->srs_usage = %i\n", srs_indication->srs_usage);
         LOG_I(NR_PHY, "srs_indication->report_type = %i\n", srs_indication->report_type);
-// #endif
+#endif
 
         nfapi_srs_report_tlv_t *report_tlv = &srs_indication->report_tlv;
         report_tlv->tag = 0;
@@ -1126,14 +1126,14 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                   channel_est_item->real = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r;
                   channel_est[index] = channel_est_item;
 
-                  // Logging info
-                  LOG_I(NR_PHY,
-                        "(uI %i, gI %i, pI %i) channel_matrix --> real %i, imag %i\n",
-                        uI,
-                        gI,
-                        pI,
-                        nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r,
-                        nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
+                //   // Logging info
+                //   LOG_I(NR_PHY,
+                //         "(uI %i, gI %i, pI %i) channel_matrix --> real %i, imag %i\n",
+                //         uI,
+                //         gI,
+                //         pI,
+                //         nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r,
+                //         nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
                 }
               }
             }

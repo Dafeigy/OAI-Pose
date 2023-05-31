@@ -761,7 +761,7 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         srs_ls_estimated_channel[subcarrier].r = ls_estimated[0];
         srs_ls_estimated_channel[subcarrier].i = ls_estimated[1];
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
         int subcarrier_log = subcarrier-subcarrier_offset;
         if(subcarrier_log < 0) {
           subcarrier_log = subcarrier_log + frame_parms->ofdm_symbol_size;
@@ -770,12 +770,12 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
           LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
           LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
         }
-        LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
-              subcarrier_log,
-              ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
-              ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
-              ls_estimated[0], ls_estimated[1]);
-#endif
+        // LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
+        //       subcarrier_log,
+        //       ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
+        //       ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
+        //       ls_estimated[0], ls_estimated[1]);
+// #endif
 
         const uint16_t sc_offset = subcarrier + mem_offset;
 
