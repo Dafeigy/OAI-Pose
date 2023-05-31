@@ -679,9 +679,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
                               int8_t *snr_per_rb,
                               int8_t *snr) {
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"Calling %s function\n", __FUNCTION__);
-#endif
+// #endif
 
   const NR_DL_FRAME_PARMS *frame_parms = &gNB->frame_parms;
   const uint64_t subcarrier_offset = frame_parms->first_carrier_offset + srs_pdu->bwp_start*NR_NB_SC_PER_RB;
@@ -718,9 +718,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
       memset(srs_ls_estimated_channel, 0, frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols)*sizeof(c16_t));
       memset(srs_est, 0, (frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset)*sizeof(int32_t));
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
       LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
-#endif
+// #endif
 
       uint16_t subcarrier = subcarrier_offset + nr_srs_info->k_0_p[p_index][0];
       if (subcarrier>frame_parms->ofdm_symbol_size) {
@@ -766,15 +766,15 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         if(subcarrier_log < 0) {
           subcarrier_log = subcarrier_log + frame_parms->ofdm_symbol_size;
         }
-        if(subcarrier_log%12 == 0) {
+        if(subcarrier_log%48 == 0) {
           LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
           LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
         }
-        // LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
-        //       subcarrier_log,
-        //       ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
-        //       ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
-        //       ls_estimated[0], ls_estimated[1]);
+        LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
+              subcarrier_log,
+              ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
+              ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
+              ls_estimated[0], ls_estimated[1]);
 // #endif
 
         const uint16_t sc_offset = subcarrier + mem_offset;
@@ -902,9 +902,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   uint32_t signal_power = calc_power(ch_real,frame_parms->nb_antennas_rx*N_ap*M_sc_b_SRS)
                           + calc_power(ch_imag,frame_parms->nb_antennas_rx*N_ap*M_sc_b_SRS);
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"signal_power = %u\n", signal_power);
-#endif
+// #endif
 
   if (signal_power == 0) {
     LOG_W(NR_PHY, "Received SRS signal power is 0\n");
@@ -958,9 +958,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 
   *snr = dB_fixed((int32_t)((signal_power<<factor_bits)/(noise_power))) - factor_dB;
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"noise_power = %u, SNR = %i dB\n", noise_power, *snr);
-#endif
+// #endif
 
   return 0;
 }
