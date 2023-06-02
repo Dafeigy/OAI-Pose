@@ -34,13 +34,16 @@
 #include "PHY/NR_REFSIG/ul_ref_seq_nr.h"
 #include "executables/softmodem-common.h"
 
-
+#include "MESSAGES/ul_est.pb-c.h"
 //#define DEBUG_CH
 //#define DEBUG_PUSCH
 //#define SRS_DEBUG
 
 #define NO_INTERP 1
 #define dBc(x,y) (dB_fixed(((int32_t)(x))*(x) + ((int32_t)(y))*(y)))
+
+#define TRANSPORT_ADDR "192.168.0.139"
+#define TRANSPORT_PORT 7776
 
 void freq2time(uint16_t ofdm_symbol_size,
                int16_t *freq_signal,
@@ -704,12 +707,23 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   int16_t ls_estimated[2];
 
   uint8_t mem_offset = ((16 - ((long)&srs_estimated_channel_freq[0][0][subcarrier_offset + nr_srs_info->k_0_p[0][0]])) & 0xF) >> 2; // >> 2 <=> /sizeof(int32_t)
-
+  // LOG_I(NR_PHY,"subcarrier_offset: %d | N_ap: %d | K_TC: %d | m_SRS_b: %d | M_sc_b_SRS %d| fd_cdm : %d | mem_offset: %d\n",subcarrier_offset,N_ap,K_TC,m_SRS_b,M_sc_b_SRS,fd_cdm, mem_offset);
   // filt16_end is {4096,8192,8192,8192,12288,16384,16384,16384,0,0,0,0,0,0,0,0}
   // The End of OFDM symbol corresponds to the position of last 16384 in the filter
   // The multadd_real_vector_complex_scalar applies the remaining 8 zeros of filter, therefore, to avoid a buffer overflow,
   // we added 8 in the array size
   int32_t srs_est[frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset + 8] __attribute__ ((aligned(32)));
+  // Initialize the requesting info.
+  NRpose__NRSRSINFO* srs_info;
+  srs_info = malloc(sizeof(NRpose__NRSRSINFO));
+  nrpose__nr__srs__info__init(srs_info);
+
+  NRpose__RESULT **gen_srs;
+  NRpose__RESULT **rec_srs;
+  NRpose__RESULT **ls_srs;
+  int32_t rec_signal_power;
+  int32_t rec_noise_power;
+  srs_info->n_gen_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
 
   for (int ant = 0; ant < frame_parms->nb_antennas_rx; ant++) {
 
@@ -719,7 +733,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
       memset(srs_est, 0, (frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset)*sizeof(int32_t));
 
 // #ifdef SRS_DEBUG
-      LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
+      // //Check some params
+      // LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
+      // LOG_I(NR_PHY,"=============== OFDM Symbol Size: %d --> srs_pdu->num_symbols: %d ==============\n", frame_parms->ofdm_symbol_size, srs_pdu->num_symbols);
 // #endif
 
       uint16_t subcarrier = subcarrier_offset + nr_srs_info->k_0_p[p_index][0];
@@ -766,15 +782,15 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         if(subcarrier_log < 0) {
           subcarrier_log = subcarrier_log + frame_parms->ofdm_symbol_size;
         }
-        if(subcarrier_log%12 == 0) {
-          LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
-          LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
-        }
-        LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
-              subcarrier_log,
-              ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
-              ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
-              ls_estimated[0], ls_estimated[1]);
+        // if(subcarrier_log%12 == 0) {
+        //   LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
+        //   LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
+        // }
+        // LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
+        //       subcarrier_log,
+        //       ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
+        //       ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
+        //       ls_estimated[0], ls_estimated[1]);
 // #endif
 
         const uint16_t sc_offset = subcarrier + mem_offset;

@@ -75,8 +75,7 @@ message CHANNLE_EST {
 [NR_PHY]   (  42)    413          -302  |   -1921          770  |   -1002         -256
 [NR_PHY]   (  44)    447           248  |   -1672        -1681  |   -1137         -329
 [NR_PHY]   (  46)    425          -285  |   -1734          236  |    -786         -385
-......
-......
+
 [NR_PHY]   ------------------------------------ 101 ------------------------------------
 [NR_PHY]          __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_
 [NR_PHY]   (1212)    -90           504  |    -841         2894  |    1498          159
@@ -104,3 +103,19 @@ message CHANNLE_EST {
 [NR_PHY]   signal_power = 2845797
 [NR_PHY]   noise_power = 19480, SNR = 21 dB
 ```
+相关的配置信息：
+```log
+[NR_PHY]   ====================== UE port 0 --> gNB Rx antenna 0 ======================
+[NR_PHY]   =============== OFDM Symbol Size: 1536 --> srs_pdu->num_symbols: 0 ==============
+[NR_PHY]   signal_power = 1432
+[NR_PHY]   noise_power = 32, SNR = 16 dB
+[NR_PHY]   Calling nr_srs_channel_estimation function
+[NR_PHY]   subcarrier_offset: 900 | N_ap: 1 | K_TC: 2 | m_SRS_b: 104 | M_sc_b_SRS 624| fd_cdm : 1 | mem_offset: 0
+[NR_PHY]   ====================== UE port 0 --> gNB Rx antenna 0 ======================
+[NR_PHY]   =============== OFDM Symbol Size: 1536 --> srs_pdu->num_symbols: 0 ==============
+[NR_PHY]   signal_power = 933
+[NR_PHY]   noise_power = 50, SNR = 12 dB
+```
+| OFDM Symbol Size | subcarrier_offset | N_ap | K_TC | m_SRS_b | M_sc_b_SRS | fd_cdm | mem_offset |
+| ---------------- | ----------------- | ---- | ---- | ------- | ---------- | ------ | ---------- |
+| 1536             | 900               | 1    | 2    | 104     | 624        | 1      | 0          |

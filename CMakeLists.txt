@@ -860,7 +860,7 @@ include_directories(${OPENAIR_DIR}/protobuf-c)
 message("-- Start protobuf generating...")
 # 旧的protobuf
 set(protobuf_generated_dir ${OPENAIR_BIN_DIR})
-set(SRS_TRAN_MSG_DIR ${OPENAIR1_DIR}/SCHED_NR/MESSAGES)
+set(SRS_TRAN_MSG_DIR ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/)
 set(SRS_TRAN_MSG_FILES
   ${SRS_TRAN_MSG_DIR}/ srs-info.proto
   )
@@ -868,10 +868,10 @@ set(SRS_TRAN_MSG_FILES
 execute_process(COMMAND protoc --proto_path==${SRS_TRAN_MSG_FILES} --c_out=${SRS_TRAN_MSG_DIR} --python_out=${SRS_TRAN_MSG_DIR})
 
 
-set(SRS_DETAILED_MSG_DIR ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES) 
+set(SRS_DETAILED_MSG_DIR ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/) 
 set(SRS_DETAILED_MSG_FILES ${SRS_DETAILED_MSG_DIR}/ ul_est.proto)
 # message(${SRS_DETAILED_MSG_FILES})
-execute_process(COMMAND protoc --proto_path=${SRS_DETAILED_MSG_DIR}/ ul-_est.proto --c_out=${SRS_DETAILED_MSG_DIR} --python_out=${SRS_DETAILED_MSG_DIR} )
+execute_process(COMMAND protoc --proto_path=${SRS_DETAILED_MSG_DIR}/ul-_est.proto --c_out=${SRS_DETAILED_MSG_DIR} --python_out=${SRS_DETAILED_MSG_DIR} )
 message("-- END FOR PROTOBUF GENERATION --")
 # nFAPI
 #################################
@@ -2283,6 +2283,8 @@ add_executable(nr-softmodem
   ${SHLIB_LOADER_SOURCES}
   ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/srs-info.pb-c.h
   ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/srs-info.pb-c.c
+  ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/ul_est.pb-c.h
+  ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/ul_est.pb-c.c
   ${OPENAIR_DIR}/protobuf-c/protobuf-c/protobuf-c.c
   ${OPENAIR_DIR}/protobuf-c/protobuf-c/protobuf-c.h
   )
