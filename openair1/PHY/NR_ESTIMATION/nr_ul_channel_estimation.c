@@ -766,7 +766,7 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         if(subcarrier_log < 0) {
           subcarrier_log = subcarrier_log + frame_parms->ofdm_symbol_size;
         }
-        if(subcarrier_log%48 == 0) {
+        if(subcarrier_log%12 == 0) {
           LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
           LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
         }
