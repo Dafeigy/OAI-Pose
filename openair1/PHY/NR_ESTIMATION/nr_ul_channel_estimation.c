@@ -19,7 +19,11 @@
  *      contact@openairinterface.org
  */
 
-
+// #include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
 #include <string.h>
 
 #include "nr_ul_estimation.h"
@@ -718,12 +722,18 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   srs_info = malloc(sizeof(NRpose__NRSRSINFO));
   nrpose__nr__srs__info__init(srs_info);
 
-  NRpose__RESULT **gen_srs;
-  NRpose__RESULT **rec_srs;
-  NRpose__RESULT **ls_srs;
+  NRpose__RESULT **gen_srs_data;
+  NRpose__RESULT **rec_srs_data;
+  NRpose__RESULT **ls_srs_data;
   int32_t rec_signal_power;
   int32_t rec_noise_power;
   srs_info->n_gen_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
+  srs_info->n_rec_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
+  srs_info->n_ls_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
+
+  gen_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_gen_srs);
+  rec_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_rec_srs);
+  ls_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_ls_srs);
 
   for (int ant = 0; ant < frame_parms->nb_antennas_rx; ant++) {
 
@@ -754,6 +764,7 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
           uint16_t subcarrier_cdm = subcarrier;
 
           for (int cdm_idx = 0; cdm_idx < fd_cdm; cdm_idx++) {
+            
 
             int16_t generated_real = ((c16_t*)srs_generated_signal[p_index])[subcarrier_cdm].r;
             int16_t generated_imag = ((c16_t*)srs_generated_signal[p_index])[subcarrier_cdm].i;
@@ -765,6 +776,8 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
             // So we only need a nr_srs_info->srs_generated_signal_bits shift to ensure that the result fits into 16 bits.
             ls_estimated[0] += (int16_t)(((int32_t)generated_real*received_real + (int32_t)generated_imag*received_imag)>>nr_srs_info->srs_generated_signal_bits);
             ls_estimated[1] += (int16_t)(((int32_t)generated_real*received_imag - (int32_t)generated_imag*received_real)>>nr_srs_info->srs_generated_signal_bits);
+
+            
 
             // Subcarrier increment
             subcarrier_cdm += K_TC;
@@ -792,7 +805,27 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         //       ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
         //       ls_estimated[0], ls_estimated[1]);
 // #endif
+        //存储每一个产生的复数
+        NRpose__RESULT * gen_item;
+        gen_item = malloc(sizeof(NRpose__RESULT));
+        nrpose__result__init(gen_item);
+        NRpose__RESULT * rec_item;
+        rec_item = malloc(sizeof(NRpose__RESULT));
+        nrpose__result__init(rec_item);
+        NRpose__RESULT * ls_item;
+        ls_item = malloc(sizeof(NRpose__RESULT));
+        nrpose__result__init(ls_item);
+        // 存储复数：
+        gen_item->image = ((c16_t*)srs_generated_signal[p_index])[subcarrier].i;
+        gen_item->real = ((c16_t*)srs_generated_signal[p_index])[subcarrier].r;
+        rec_item->image = ((c16_t*)srs_received_signal[ant])[subcarrier].i;
+        rec_item->real = ((c16_t*)srs_received_signal[ant])[subcarrier].r;
+        ls_item->image = ls_estimated[1];
+        ls_item->real = ls_estimated[0];
 
+        gen_srs_data[subcarrier_log/2] = gen_item;
+        rec_srs_data[subcarrier_log/2] = rec_item;
+        ls_srs_data[subcarrier_log/2] = ls_item;
         const uint16_t sc_offset = subcarrier + mem_offset;
 
         // Channel interpolation
@@ -977,6 +1010,28 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 // #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"noise_power = %u, SNR = %i dB\n", noise_power, *snr);
 // #endif
+  srs_info->gen_srs = gen_srs_data;
+  srs_info->rec_srs = rec_srs_data;
+  srs_info->ls_srs = ls_srs_data;
+  srs_info->signal_power = signal_power;
+  srs_info->noise_power = *snr;
 
+  int length = nrpose__nr__srs__info__get_packed_size(srs_info);
+  void *buffer = malloc(sizeof(uint8_t)* length);
+  nrpose__nr__srs__info__pack(srs_info, buffer);
+  int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+  if(sockfd < 0){
+        perror("sockfd");
+        return -1;
+    }
+    struct sockaddr_in ser;
+    ser.sin_family = AF_INET;
+    ser.sin_port = htons(TRANSPORT_PORT);
+    ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
+    sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
+    close(sockfd);
+    free(gen_srs_data);
+    free(rec_srs_data);
+    free(ls_srs_data);
   return 0;
 }
