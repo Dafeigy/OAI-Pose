@@ -657,12 +657,12 @@ int nr_ue_pdsch_procedures(PHY_VARS_NR_UE *ue,
       }
     } // CRNTI active
     stop_meas(&ue->rx_pdsch_stats);
-    if (){
-      NR_UE_COMMON *comman_vars = &ue->common_vars;
-      int pos = 0;
-      int symbolExtId = 0;
-      g_dmrs
-    }
+    // if (){
+    //   NR_UE_COMMON *comman_vars = &ue->common_vars;
+    //   int pos = 0;
+    //   int symbolExtId = 0;
+    //   g_dmrs
+    // }
   }
   return 0;
 }
