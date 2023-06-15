@@ -111,11 +111,155 @@ message CHANNLE_EST {
 [NR_PHY]   noise_power = 32, SNR = 16 dB
 [NR_PHY]   Calling nr_srs_channel_estimation function
 [NR_PHY]   subcarrier_offset: 900 | N_ap: 1 | K_TC: 2 | m_SRS_b: 104 | M_sc_b_SRS 624| fd_cdm : 1 | mem_offset: 0
-[NR_PHY]   ====================== UE port 0 --> gNB Rx antenna 0 ======================
-[NR_PHY]   =============== OFDM Symbol Size: 1536 --> srs_pdu->num_symbols: 0 ==============
-[NR_PHY]   signal_power = 933
-[NR_PHY]   noise_power = 50, SNR = 12 dB
 ```
 | OFDM Symbol Size | subcarrier_offset | N_ap | K_TC | m_SRS_b | M_sc_b_SRS | fd_cdm | mem_offset |
 | ---------------- | ----------------- | ---- | ---- | ------- | ---------- | ------ | ---------- |
 | 1536             | 900               | 1    | 2    | 104     | 624        | 1      | 0          |
+
+## 2023/6/5
+~~困得想死，买了瓶陈醋可乐居然要7.9￥！我好崩溃...~~今天要做的是将json数据解析分解然后传到Flask端，Flask端中的js代码来解析传入的数据。另外还需要考虑一个问题：信道估计那104个值，如果使用反三角函数来计算他的相位那么运行时间还是比较大的，要不考虑简单点的数据处理？比如说区间划分啥的可以降低计算复杂度。直接再Echarts官网可视化了一下数据：
+
+<img src="https://s2.loli.net/2023/06/05/HuN5ZCQdl4paX3x.png" style="zoom:50%;" />
+
+没有原始码本信息的时候有：
+
+<img src="https://s2.loli.net/2023/06/05/iXocrb4pUJLhZ8a.png" alt="without_origin_data" style="zoom:50%;" />
+
+当数据格式采用genSRS+recSRS+lsSRS+signalPower+noisePower时，UDP的开销非常大延迟大概有0.24s。解决方法是传到多个socket里面。对104个SRS估计的结果，传输的信道矩阵延迟约为0.08s，能满足10fps的要求。
+
+## 2023/6/6
+以为是UDP的接收端的问题，结果发现好像是C端的传输能力问题。数据的处理几乎不耗费时间，唯一的问题在于UDP发射速率。我在想是否和线程阻塞有关，反正至少现在UDP没有丢包。接下来先摸几天，然后看下那个104以及一些参数的设定。以及`CMakelist`的修改暂时搁置，每次用protobuf的时候还是CD到那个地方然后再引入吧，现在效果如图：
+
+![82d2ea1c8337752927c133ffce050e4](https://s2.loli.net/2023/06/06/ZgQuFVxsvTyEl4M.png)
+
+还有一个值得关注的点就是UDP发送的阻塞。多线程去做？回去看一下他们代码怎么写的。
+
+## 2023/6/7
+
+~~打算使用pthread去建立socket，进而使用UDP进行传输。~~
+
+~~start_server启动线程，用的是OAI里面的线程管理。~~
+
+发送端性能拉满了，问题在接收端。UDP的时延再优化也只能做到0.08s。只能保障接收，不能保证渲染。前端如果要实时查看的话，应该帧率在10帧左右。备选方案是采用时间同步+相机数据的同步采集。Ubuntu下可参考[performance - Receive an high rate of UDP packets with python - Stack Overflow](https://stackoverflow.com/questions/51448972/receive-an-high-rate-of-udp-packets-with-python)实现离线的交互。
+
+
+
+gnb中的数据，来源于`fill_srs_channel_matrix()`函数中的一个参数channel_matrix，他作为一个返回的值，被`srs_estimated_channel16`或`srs_estimated_channel8`的值所赋予，，而他的依赖又是`srs_estimated_channel_freq`，也是一个参数返回值，在实际使用的时候对应的是`srs_estimated_channel_freq`，实际上在`nr_srs_channel_estimation()`中被使用，依赖是`srs_est`。返回的应该是频率的估计，还没整理完；补充一些额外的配置参数，在`openair1/PHY/NR_UE_TRANSPORT/srs_modulation_nr.c`中找到`SRS_DEBUG`又一大长串：
+
+| B_SRS | C_SRS | b_hop | K_TC | n_SRS_cs | n_shift | l0   | n_SRS_cs_max |
+| ----- | ----- | ----- | ---- | -------- | ------- | ---- | ------------ |
+| 0     | 25    | 0     | 2    | 0        | 0       | 12   | 8            |
+
+所以分配到的PRB通过查表可以看出来是104个。
+
+## 2023/6/8
+
+信道栅格的计算。当知道绝对信道频点编号$N_{REF}$后通过查表计算升级频率值：
+$$
+F_{REF}=F_{REF-Offs}+\Delta F_{Global}(N_{REF}-N_{REF-Offs})
+$$
+
+| 频率范围/**MHz** | **$\Delta F_{Global}/MHz$** | **$F_{REF-offs}/MHz$** | **$N_{REF-Offs}$** | **$N_{REF}$取值范围** |
+| :--------------: | :-------------------------: | :--------------------: | :----------------: | :-------------------: |
+|     0~3,000      |              5              |           0            |         0          |       0~599,999       |
+|   3,000~24,250   |             15              |         3,000          |      600,000       |   600,000~2,016,666   |
+|  24,250~100,000  |             60              |       24,250.08        |     2,016,667      |  2,016,667~3,279,165  |
+
+以OAI的配置文件为例，`absoluteFrequencySSB=641280`，即为SSB绝对频点$N_{REF}$，计算$(641280-600000)*15KHz+3000MHz=3.6192MHz$。
+
+
+
+## 2023/6/9
+
+弄懂配置了：
+
+![image-20230609130403803](https://s2.loli.net/2023/06/09/xjYlATzv645HIKM.png)
+
+得到的估计是624/slot，
+
+## 2023/6/12
+
+用docker部署一个Gitlab方便开发。
+
+```bash
+docker pull gitlab/gitlab-ce:latest
+```
+
+随后启动：
+
+```bash
+# 启动容器
+docker run \
+ -itd  \
+ -p 9980:80 \
+ -p 9922:22 \
+ -v /home/gitlab/etc:/etc/gitlab  \
+ -v /home/gitlab/log:/var/log/gitlab \
+ -v /home/gitlab/opt:/var/opt/gitlab \
+ --restart always \
+ --privileged=true \
+ --name gitlab \
+ gitlab/gitlab-ce
+```
+
+进入容器内部修改：
+
+```bash
+#进容器内部
+docker exec -it gitlab /bin/bash
+ 
+#修改gitlab.rb
+vi /etc/gitlab/gitlab.rb
+ 
+#加入如下
+#gitlab访问地址，可以写域名。如果端口不写的话默认为80端口
+external_url 'http://192.168.0.140'
+#ssh主机ip
+gitlab_rails['gitlab_ssh_host'] = '192.168.0.140'
+#ssh连接端口
+gitlab_rails['gitlab_shell_ssh_port'] = 9922
+ 
+# 让配置生效
+gitlab-ctl reconfigure
+```
+
+## 2023/6/13
+
+摸了一天
+
+## 2023/6/14
+
+研究了一下射频卡，发现free5gc核心网识别不了amf的TAI信息
+
+同时Gitlab崩了，核心网主机不够位置，换了个地方。顺便把上面的补齐：
+
+```bash
+# 修改http和ssh配置
+vi /opt/gitlab/embedded/service/gitlab-rails/config/gitlab.yml
+ 
+  gitlab:
+    host: 192.168.124.194
+    port: 9980 # 原本是这里改为9980
+    https: false
+```
+
+修改root用户密码：
+
+```bash
+# 进入容器内部
+docker exec -it gitlab /bin/bash
+ 
+# 进入控制台
+gitlab-rails console -e production
+ 
+# 查询id为1的用户，id为1的用户是超级管理员
+user = User.where(id:1).first
+# 修改密码为rdc-china
+user.password='rdc-china'
+# 保存
+user.save!
+# 退出
+exit
+ 
+```
+
