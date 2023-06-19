@@ -268,3 +268,14 @@ N310拿了出来，但是安装起来比较麻烦。修改了智邮的gNB参数�
 
 ## 2023/6/16
 网络崩了，然后准备画图
+
+## 2023/6/19
+图画好了巨好看：
+
+
+今天配一下N310：
+![N310](https://kb.ettus.com/images/0/0c/n310_kit.png)
+
+配置N310时要用网线一端直接接RJ45口，另一端接路由器，然后通过`uhd_find_devices`指令可以找到连接的N310的IP地址。注意不能通过SFP口再使用ssh连接，RJ45的网线口是可以远程连接的，用户名为root，默认没有密码。
+
+连接上后需要更新驱动和镜像，这些按照[官网教程](https://kb.ettus.com/USRP_N300/N310/N320/N321_Getting_Started_Guide#Connecting_to_the_ARM_via_SSH)或[博客](https://blog.csdn.net/gibbs_/article/details/122043328)可查到。
