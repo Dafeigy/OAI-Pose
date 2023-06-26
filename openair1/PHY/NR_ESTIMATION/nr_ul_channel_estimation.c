@@ -718,22 +718,22 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   // we added 8 in the array size
   int32_t srs_est[frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset + 8] __attribute__ ((aligned(32)));
   // Initialize the requesting info.
-  NRpose__NRSRSINFO* srs_info;
-  srs_info = malloc(sizeof(NRpose__NRSRSINFO));
-  nrpose__nr__srs__info__init(srs_info);
+  // NRpose__NRSRSINFO* srs_info;
+  // srs_info = malloc(sizeof(NRpose__NRSRSINFO));
+  // nrpose__nr__srs__info__init(srs_info);
 
-  NRpose__RESULT **gen_srs_data;
-  NRpose__RESULT **rec_srs_data;
-  NRpose__RESULT **ls_srs_data;
+  // NRpose__RESULT **gen_srs_data;
+  // NRpose__RESULT **rec_srs_data;
+  // NRpose__RESULT **ls_srs_data;
   int32_t rec_signal_power;
   int32_t rec_noise_power;
-  srs_info->n_gen_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
-  srs_info->n_rec_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
-  srs_info->n_ls_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
+  // srs_info->n_gen_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
+  // srs_info->n_rec_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
+  // srs_info->n_ls_srs = frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS;
 
-  gen_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_gen_srs);
-  rec_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_rec_srs);
-  ls_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_ls_srs);
+  // gen_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_gen_srs);
+  // rec_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_rec_srs);
+  // ls_srs_data = malloc(sizeof(NRpose__RESULT) * srs_info->n_ls_srs);
 
   for (int ant = 0; ant < frame_parms->nb_antennas_rx; ant++) {
 
@@ -795,10 +795,17 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         if(subcarrier_log < 0) {
           subcarrier_log = subcarrier_log + frame_parms->ofdm_symbol_size;
         }
-        // if(subcarrier_log%12 == 0) {
-        //   LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
-        //   LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
-        // }
+        if(subcarrier_log%12 == 0) {
+          LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
+          LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
+        }
+        if (subcarrier_log%120 == 0){
+          LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
+              subcarrier_log,
+              ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
+              ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
+              ls_estimated[0], ls_estimated[1]);
+        }
         // LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
         //       subcarrier_log,
         //       ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,

@@ -15,6 +15,7 @@ PROTOBUF_C__BEGIN_DECLS
 #endif
 
 
+typedef struct _NRpose__NRSRSPACK NRpose__NRSRSPACK;
 typedef struct _NRpose__NRSRSINFO NRpose__NRSRSINFO;
 typedef struct _NRpose__RESULT NRpose__RESULT;
 
@@ -24,24 +25,28 @@ typedef struct _NRpose__RESULT NRpose__RESULT;
 
 /* --- messages --- */
 
-/*
- * 防止出问题用了NRPose的package 标识一下这是SONY项目的
- */
-struct  _NRpose__NRSRSINFO
+struct  _NRpose__NRSRSPACK
 {
   ProtobufCMessage base;
-  size_t n_gen_srs;
-  NRpose__RESULT **gen_srs;
-  size_t n_rec_srs;
-  NRpose__RESULT **rec_srs;
-  size_t n_ls_srs;
-  NRpose__RESULT **ls_srs;
+  size_t n_estimation;
+  NRpose__NRSRSINFO **estimation;
   int32_t signal_power;
   int32_t noise_power;
 };
+#define NRPOSE__NR__SRS__PACK__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&nrpose__nr__srs__pack__descriptor) \
+    , 0,NULL, 0, 0 }
+
+
+struct  _NRpose__NRSRSINFO
+{
+  ProtobufCMessage base;
+  size_t n_ls_srs;
+  NRpose__RESULT **ls_srs;
+};
 #define NRPOSE__NR__SRS__INFO__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&nrpose__nr__srs__info__descriptor) \
-    , 0,NULL, 0,NULL, 0,NULL, 0, 0 }
+    , 0,NULL }
 
 
 /*
@@ -58,6 +63,25 @@ struct  _NRpose__RESULT
     , 0, 0 }
 
 
+/* NRpose__NRSRSPACK methods */
+void   nrpose__nr__srs__pack__init
+                     (NRpose__NRSRSPACK         *message);
+size_t nrpose__nr__srs__pack__get_packed_size
+                     (const NRpose__NRSRSPACK   *message);
+size_t nrpose__nr__srs__pack__pack
+                     (const NRpose__NRSRSPACK   *message,
+                      uint8_t             *out);
+size_t nrpose__nr__srs__pack__pack_to_buffer
+                     (const NRpose__NRSRSPACK   *message,
+                      ProtobufCBuffer     *buffer);
+NRpose__NRSRSPACK *
+       nrpose__nr__srs__pack__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   nrpose__nr__srs__pack__free_unpacked
+                     (NRpose__NRSRSPACK *message,
+                      ProtobufCAllocator *allocator);
 /* NRpose__NRSRSINFO methods */
 void   nrpose__nr__srs__info__init
                      (NRpose__NRSRSINFO         *message);
@@ -98,6 +122,9 @@ void   nrpose__result__free_unpacked
                       ProtobufCAllocator *allocator);
 /* --- per-message closures --- */
 
+typedef void (*NRpose__NRSRSPACK_Closure)
+                 (const NRpose__NRSRSPACK *message,
+                  void *closure_data);
 typedef void (*NRpose__NRSRSINFO_Closure)
                  (const NRpose__NRSRSINFO *message,
                   void *closure_data);
@@ -110,6 +137,7 @@ typedef void (*NRpose__RESULT_Closure)
 
 /* --- descriptors --- */
 
+extern const ProtobufCMessageDescriptor nrpose__nr__srs__pack__descriptor;
 extern const ProtobufCMessageDescriptor nrpose__nr__srs__info__descriptor;
 extern const ProtobufCMessageDescriptor nrpose__result__descriptor;
 

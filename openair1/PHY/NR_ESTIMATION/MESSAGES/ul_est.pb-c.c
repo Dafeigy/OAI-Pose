@@ -7,6 +7,51 @@
 #endif
 
 #include "ul_est.pb-c.h"
+void   nrpose__nr__srs__pack__init
+                     (NRpose__NRSRSPACK         *message)
+{
+  static const NRpose__NRSRSPACK init_value = NRPOSE__NR__SRS__PACK__INIT;
+  *message = init_value;
+}
+size_t nrpose__nr__srs__pack__get_packed_size
+                     (const NRpose__NRSRSPACK *message)
+{
+  assert(message->base.descriptor == &nrpose__nr__srs__pack__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t nrpose__nr__srs__pack__pack
+                     (const NRpose__NRSRSPACK *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &nrpose__nr__srs__pack__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t nrpose__nr__srs__pack__pack_to_buffer
+                     (const NRpose__NRSRSPACK *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &nrpose__nr__srs__pack__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+NRpose__NRSRSPACK *
+       nrpose__nr__srs__pack__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (NRpose__NRSRSPACK *)
+     protobuf_c_message_unpack (&nrpose__nr__srs__pack__descriptor,
+                                allocator, len, data);
+}
+void   nrpose__nr__srs__pack__free_unpacked
+                     (NRpose__NRSRSPACK *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &nrpose__nr__srs__pack__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
 void   nrpose__nr__srs__info__init
                      (NRpose__NRSRSINFO         *message)
 {
@@ -97,32 +142,73 @@ void   nrpose__result__free_unpacked
   assert(message->base.descriptor == &nrpose__result__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor nrpose__nr__srs__info__field_descriptors[5] =
+static const ProtobufCFieldDescriptor nrpose__nr__srs__pack__field_descriptors[3] =
 {
   {
-    "GEN_SRS",
+    "ESTIMATION",
     1,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
-    offsetof(NRpose__NRSRSINFO, n_gen_srs),
-    offsetof(NRpose__NRSRSINFO, gen_srs),
-    &nrpose__result__descriptor,
+    offsetof(NRpose__NRSRSPACK, n_estimation),
+    offsetof(NRpose__NRSRSPACK, estimation),
+    &nrpose__nr__srs__info__descriptor,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "REC_SRS",
-    2,
-    PROTOBUF_C_LABEL_REPEATED,
-    PROTOBUF_C_TYPE_MESSAGE,
-    offsetof(NRpose__NRSRSINFO, n_rec_srs),
-    offsetof(NRpose__NRSRSINFO, rec_srs),
-    &nrpose__result__descriptor,
+    "SIGNAL_POWER",
+    4,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(NRpose__NRSRSPACK, signal_power),
+    NULL,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
+  {
+    "NOISE_POWER",
+    5,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(NRpose__NRSRSPACK, noise_power),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned nrpose__nr__srs__pack__field_indices_by_name[] = {
+  0,   /* field[0] = ESTIMATION */
+  2,   /* field[2] = NOISE_POWER */
+  1,   /* field[1] = SIGNAL_POWER */
+};
+static const ProtobufCIntRange nrpose__nr__srs__pack__number_ranges[2 + 1] =
+{
+  { 1, 0 },
+  { 4, 1 },
+  { 0, 3 }
+};
+const ProtobufCMessageDescriptor nrpose__nr__srs__pack__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "NRpose.NR_SRS_PACK",
+  "NRSRSPACK",
+  "NRpose__NRSRSPACK",
+  "NRpose",
+  sizeof(NRpose__NRSRSPACK),
+  3,
+  nrpose__nr__srs__pack__field_descriptors,
+  nrpose__nr__srs__pack__field_indices_by_name,
+  2,  nrpose__nr__srs__pack__number_ranges,
+  (ProtobufCMessageInit) nrpose__nr__srs__pack__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor nrpose__nr__srs__info__field_descriptors[1] =
+{
   {
     "LS_SRS",
     3,
@@ -135,42 +221,14 @@ static const ProtobufCFieldDescriptor nrpose__nr__srs__info__field_descriptors[5
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
-  {
-    "SIGNAL_POWER",
-    4,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_INT32,
-    0,   /* quantifier_offset */
-    offsetof(NRpose__NRSRSINFO, signal_power),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "NOISE_POWER",
-    5,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_INT32,
-    0,   /* quantifier_offset */
-    offsetof(NRpose__NRSRSINFO, noise_power),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
 };
 static const unsigned nrpose__nr__srs__info__field_indices_by_name[] = {
-  0,   /* field[0] = GEN_SRS */
-  2,   /* field[2] = LS_SRS */
-  4,   /* field[4] = NOISE_POWER */
-  1,   /* field[1] = REC_SRS */
-  3,   /* field[3] = SIGNAL_POWER */
+  0,   /* field[0] = LS_SRS */
 };
 static const ProtobufCIntRange nrpose__nr__srs__info__number_ranges[1 + 1] =
 {
-  { 1, 0 },
-  { 0, 5 }
+  { 3, 0 },
+  { 0, 1 }
 };
 const ProtobufCMessageDescriptor nrpose__nr__srs__info__descriptor =
 {
@@ -180,7 +238,7 @@ const ProtobufCMessageDescriptor nrpose__nr__srs__info__descriptor =
   "NRpose__NRSRSINFO",
   "NRpose",
   sizeof(NRpose__NRSRSINFO),
-  5,
+  1,
   nrpose__nr__srs__info__field_descriptors,
   nrpose__nr__srs__info__field_indices_by_name,
   1,  nrpose__nr__srs__info__number_ranges,

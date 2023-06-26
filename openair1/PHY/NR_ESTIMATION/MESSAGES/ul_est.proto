@@ -1,12 +1,14 @@
 syntax = "proto2";
 package NRpose;
 // 防止出问题用了NRPose的package 标识一下这是SONY项目的
+
+message NR_SRS_PACK{
+  repeated NR_SRS_INFO ESTIMATION = 1;
+  required int32 SIGNAL_POWER = 4;
+  required int32 NOISE_POWER = 5;
+}
 message NR_SRS_INFO{
-    repeated RESULT GEN_SRS = 1;
-    repeated RESULT REC_SRS = 2;
-    repeated RESULT LS_SRS  = 3;
-    required int32 SIGNAL_POWER = 4;
-    required int32 NOISE_POWER = 5;
+  repeated RESULT LS_SRS  = 3;
 }
 // RESULT存放的其实是和信道相关的复数结构，由于以上指标都是复数形式所以就统一命名为RESULT
 message RESULT {
