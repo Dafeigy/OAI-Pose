@@ -1105,57 +1105,57 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
             c16_t *channel_matrix16 = (c16_t *)nr_srs_channel_iq_matrix.channel_matrix;
             c8_t *channel_matrix8 = (c8_t *)nr_srs_channel_iq_matrix.channel_matrix;
 
-            // 初始化该slot的接受SRS信号的信息
-            Protocol__NRSRSIQEST* nr_srs_est;
-            nr_srs_est = malloc(sizeof(Protocol__NRSRSIQEST));
-            protocol__nr__srs__iq__est__init(nr_srs_est);
-            Protocol__CHANNLEEST ** channel_est;
-            nr_srs_est->n_channle_est_list  = nr_srs_channel_iq_matrix.num_ue_srs_ports*nr_srs_channel_iq_matrix.num_gnb_antenna_elements*nr_srs_channel_iq_matrix.num_prgs;
-            channel_est = malloc(sizeof(Protocol__CHANNLEEST)*nr_srs_est->n_channle_est_list);
+            // // 初始化该slot的接受SRS信号的信息
+            // Protocol__NRSRSIQEST* nr_srs_est;
+            // nr_srs_est = malloc(sizeof(Protocol__NRSRSIQEST));
+            // protocol__nr__srs__iq__est__init(nr_srs_est);
+            // Protocol__CHANNLEEST ** channel_est;
+            // nr_srs_est->n_channle_est_list  = nr_srs_channel_iq_matrix.num_ue_srs_ports*nr_srs_channel_iq_matrix.num_gnb_antenna_elements*nr_srs_channel_iq_matrix.num_prgs;
+            // channel_est = malloc(sizeof(Protocol__CHANNLEEST)*nr_srs_est->n_channle_est_list);
             for (int uI = 0; uI < nr_srs_channel_iq_matrix.num_ue_srs_ports; uI++) {
               for (int gI = 0; gI < nr_srs_channel_iq_matrix.num_gnb_antenna_elements; gI++) {
                 for (int pI = 0; pI < nr_srs_channel_iq_matrix.num_prgs; pI++) {
                   uint16_t index =
                       uI * nr_srs_channel_iq_matrix.num_gnb_antenna_elements * nr_srs_channel_iq_matrix.num_prgs + gI * nr_srs_channel_iq_matrix.num_prgs + pI;
                   
-                  Protocol__CHANNLEEST * channel_est_item;
-                  channel_est_item = malloc(sizeof(Protocol__CHANNLEEST));
-                  protocol__channle__est__init(channel_est_item);
+                  // Protocol__CHANNLEEST * channel_est_item;
+                  // channel_est_item = malloc(sizeof(Protocol__CHANNLEEST));
+                  // protocol__channle__est__init(channel_est_item);
 
-                  channel_est_item->image = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i;
-                  channel_est_item->real = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r;
-                  channel_est[index] = channel_est_item;
+                  // channel_est_item->image = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i;
+                  // channel_est_item->real = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r;
+                  // channel_est[index] = channel_est_item;
 
-                //   // Logging info
-                //   LOG_I(NR_PHY,
-                //         "(uI %i, gI %i, pI %i) channel_matrix --> real %i, imag %i\n",
-                //         uI,
-                //         gI,
-                //         pI,
-                //         nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r,
-                //         nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
+                  // Logging info
+                  LOG_I(NR_PHY,
+                        "(uI %i, gI %i, pI %i) channel_matrix --> real %i, imag %i\n",
+                        uI,
+                        gI,
+                        pI,
+                        nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r,
+                        nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
                 }
               }
             }
 // #endif
             // 遍历完全部的SRS后将该slot的SRS信息存放到buffer里
-            nr_srs_est->channle_est_list = channel_est;
-            int length = protocol__nr__srs__iq__est__get_packed_size(nr_srs_est);
-            void *buffer = malloc (sizeof(uint8_t)* length);
-            protocol__nr__srs__iq__est__pack(nr_srs_est,buffer);
-            int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-            if(sockfd < 0)
-            {
-                perror("sockfd");
-                return -1;
-            }
-            struct sockaddr_in ser;
-            ser.sin_family = AF_INET;
-            ser.sin_port = htons(TRANSPORT_PORT);
-            ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
-            sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
-            close(sockfd);
-            free(channel_est);
+            // nr_srs_est->channle_est_list = channel_est;
+            // int length = protocol__nr__srs__iq__est__get_packed_size(nr_srs_est);
+            // void *buffer = malloc (sizeof(uint8_t)* length);
+            // protocol__nr__srs__iq__est__pack(nr_srs_est,buffer);
+            // int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+            // if(sockfd < 0)
+            // {
+            //     perror("sockfd");
+            //     return -1;
+            // }
+            // struct sockaddr_in ser;
+            // ser.sin_family = AF_INET;
+            // ser.sin_port = htons(TRANSPORT_PORT);
+            // ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
+            // sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
+            // close(sockfd);
+            // free(channel_est);
             report_tlv->length = pack_nr_srs_normalized_channel_iq_matrix(&nr_srs_channel_iq_matrix, report_tlv->value, sizeof(report_tlv->value));
             stop_meas(&gNB->srs_iq_matrix_stats);
             break;

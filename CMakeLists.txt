@@ -48,6 +48,8 @@ include_directories(${CRYPTO_INCLUDE_DIRS})
 
 #uhd 4.0 and iris installs by default in /usr/local
 include_directories("/usr/local/include/")
+# include_directories("/usr/local/")
+
 #use native cmake method as this package is not in pkg-config
 add_list2_option(RF_BOARD "None" "RF head type" "None" "OAI_USRP" "OAI_BLADERF" "OAI_LMSSDR" "OAI_SIMU")
 if (${RF_BOARD} STREQUAL "OAI_USRP")

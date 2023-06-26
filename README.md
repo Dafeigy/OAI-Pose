@@ -28,4 +28,7 @@ sudo ./nr-softmodem -O ../../../srs-lo.conf --sa -E --continuous-tx
 sudo ./nr-softmodem -O ../../../srs-sony.conf --sa -E --continuous-tx
 
 sudo ./nr-softmodem -O ../../../srs-sony-oxg.conf --sa -E
+
+####### N310
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.band78.sa.fr1.106PRB.2x2.usrpn310.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
 ```

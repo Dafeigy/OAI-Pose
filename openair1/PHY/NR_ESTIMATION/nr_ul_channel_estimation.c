@@ -743,9 +743,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
       memset(srs_est, 0, (frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset)*sizeof(int32_t));
 
 // #ifdef SRS_DEBUG
-      // //Check some params
-      // LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
-      // LOG_I(NR_PHY,"=============== OFDM Symbol Size: %d --> srs_pdu->num_symbols: %d ==============\n", frame_parms->ofdm_symbol_size, srs_pdu->num_symbols);
+      //Check some params
+      LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
+      LOG_I(NR_PHY,"=============== OFDM Symbol Size: %d --> srs_pdu->num_symbols: %d ==============\n", frame_parms->ofdm_symbol_size, srs_pdu->num_symbols);
 // #endif
 
       uint16_t subcarrier = subcarrier_offset + nr_srs_info->k_0_p[p_index][0];
@@ -806,26 +806,26 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         //       ls_estimated[0], ls_estimated[1]);
 // #endif
         //存储每一个产生的复数
-        NRpose__RESULT * gen_item;
-        gen_item = malloc(sizeof(NRpose__RESULT));
-        nrpose__result__init(gen_item);
-        NRpose__RESULT * rec_item;
-        rec_item = malloc(sizeof(NRpose__RESULT));
-        nrpose__result__init(rec_item);
-        NRpose__RESULT * ls_item;
-        ls_item = malloc(sizeof(NRpose__RESULT));
-        nrpose__result__init(ls_item);
-        // 存储复数：
-        gen_item->image = ((c16_t*)srs_generated_signal[p_index])[subcarrier].i;
-        gen_item->real = ((c16_t*)srs_generated_signal[p_index])[subcarrier].r;
-        rec_item->image = ((c16_t*)srs_received_signal[ant])[subcarrier].i;
-        rec_item->real = ((c16_t*)srs_received_signal[ant])[subcarrier].r;
-        ls_item->image = ls_estimated[1];
-        ls_item->real = ls_estimated[0];
+        // NRpose__RESULT * gen_item;
+        // gen_item = malloc(sizeof(NRpose__RESULT));
+        // nrpose__result__init(gen_item);
+        // NRpose__RESULT * rec_item;
+        // rec_item = malloc(sizeof(NRpose__RESULT));
+        // nrpose__result__init(rec_item);
+        // NRpose__RESULT * ls_item;
+        // ls_item = malloc(sizeof(NRpose__RESULT));
+        // nrpose__result__init(ls_item);
+        // // 存储复数：
+        // gen_item->image = ((c16_t*)srs_generated_signal[p_index])[subcarrier].i;
+        // gen_item->real = ((c16_t*)srs_generated_signal[p_index])[subcarrier].r;
+        // rec_item->image = ((c16_t*)srs_received_signal[ant])[subcarrier].i;
+        // rec_item->real = ((c16_t*)srs_received_signal[ant])[subcarrier].r;
+        // ls_item->image = ls_estimated[1];
+        // ls_item->real = ls_estimated[0];
 
-        gen_srs_data[subcarrier_log/2] = gen_item;
-        rec_srs_data[subcarrier_log/2] = rec_item;
-        ls_srs_data[subcarrier_log/2] = ls_item;
+        // gen_srs_data[subcarrier_log/2] = gen_item;
+        // rec_srs_data[subcarrier_log/2] = rec_item;
+        // ls_srs_data[subcarrier_log/2] = ls_item;
         const uint16_t sc_offset = subcarrier + mem_offset;
 
         // Channel interpolation
@@ -1010,28 +1010,28 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 // #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"noise_power = %u, SNR = %i dB\n", noise_power, *snr);
 // #endif
-  srs_info->gen_srs = gen_srs_data;
-  srs_info->rec_srs = rec_srs_data;
-  srs_info->ls_srs = ls_srs_data;
-  srs_info->signal_power = signal_power;
-  srs_info->noise_power = *snr;
+  // srs_info->gen_srs = gen_srs_data;
+  // srs_info->rec_srs = rec_srs_data;
+  // srs_info->ls_srs = ls_srs_data;
+  // srs_info->signal_power = signal_power;
+  // srs_info->noise_power = *snr;
 
-  int length = nrpose__nr__srs__info__get_packed_size(srs_info);
-  void *buffer = malloc(sizeof(uint8_t)* length);
-  nrpose__nr__srs__info__pack(srs_info, buffer);
-  int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-  if(sockfd < 0){
-        perror("sockfd");
-        return -1;
-    }
-    struct sockaddr_in ser;
-    ser.sin_family = AF_INET;
-    ser.sin_port = htons(TRANSPORT_PORT);
-    ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
-    sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
-    close(sockfd);
-    free(gen_srs_data);
-    free(rec_srs_data);
-    free(ls_srs_data);
+  // int length = nrpose__nr__srs__info__get_packed_size(srs_info);
+  // void *buffer = malloc(sizeof(uint8_t)* length);
+  // nrpose__nr__srs__info__pack(srs_info, buffer);
+  // int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+  // if(sockfd < 0){
+  //       perror("sockfd");
+  //       return -1;
+  //   }
+  //   struct sockaddr_in ser;
+  //   ser.sin_family = AF_INET;
+  //   ser.sin_port = htons(TRANSPORT_PORT);
+  //   ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
+  //   sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
+  //   close(sockfd);
+  //   free(gen_srs_data);
+  //   free(rec_srs_data);
+  //   free(ls_srs_data);
   return 0;
 }
