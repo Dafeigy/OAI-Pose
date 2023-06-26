@@ -31,4 +31,10 @@ sudo ./nr-softmodem -O ../../../srs-sony-oxg.conf --sa -E
 
 ####### N310
 sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.band78.sa.fr1.106PRB.2x2.usrpn310.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
+
+
+## Run OAI nrUE
+
+```bash
+sudo ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --ue-fo-compensation --sa -E --uicc0.imsi 466920000000003
 ```
