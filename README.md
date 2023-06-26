@@ -6,6 +6,16 @@ git clone https://github.com/protobuf-c/protobuf-c.git
 git clone https://github.com/protocolbuffers/protobuf.git
 ```
 
+## Before run
+
+```bash
+sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.133
+
+sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.133
+
+
+```
+
 ## Build OAI-Pose
 
 ```bash
@@ -15,7 +25,7 @@ cd cmake_targets
 sudo ./build_oai -w USRP --ninja --gNB -c
 ```
 
-# Run OAI-pose
+## Run OAI-pose
 ```bash
 cd NR-Pose
 source oaienv

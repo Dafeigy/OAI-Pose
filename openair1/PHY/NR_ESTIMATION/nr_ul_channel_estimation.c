@@ -722,9 +722,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
       memset(srs_ls_estimated_channel, 0, frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols)*sizeof(c16_t));
       memset(srs_est, 0, (frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset)*sizeof(int32_t));
 
-// #ifdef SRS_DEBUG
+#ifdef SRS_DEBUG
       LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
-// #endif
+#endif
 
       uint16_t subcarrier = subcarrier_offset + nr_srs_info->k_0_p[p_index][0];
       if (subcarrier>frame_parms->ofdm_symbol_size) {
