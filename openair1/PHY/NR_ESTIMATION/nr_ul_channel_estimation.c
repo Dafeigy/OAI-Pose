@@ -21,6 +21,10 @@
 
 
 #include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
 
 #include "nr_ul_estimation.h"
 #include "PHY/sse_intrin.h"
@@ -38,6 +42,10 @@
 //#define DEBUG_CH
 //#define DEBUG_PUSCH
 //#define SRS_DEBUG
+#include "MESSAGES/ul_est.pb-c.h"
+#define TRANSPORT_ADDR "192.168.0.139"
+#define TRANSPORT_PORT 7776
+
 
 #define NO_INTERP 1
 #define dBc(x,y) (dB_fixed(((int32_t)(x))*(x) + ((int32_t)(y))*(y)))
@@ -714,17 +722,31 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   // The multadd_real_vector_complex_scalar applies the remaining 8 zeros of filter, therefore, to avoid a buffer overflow,
   // we added 8 in the array size
   int32_t srs_est[frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset + 8] __attribute__ ((aligned(32)));
-
+  // [Protobuf] 初始化Protobuf信息，此处为整合的包
+  NRpose__NRSRSPACK* srs_info_pack;
+  srs_info_pack = malloc(sizeof(NRpose__NRSRSPACK));
+  nrpose__nr__srs__pack__init(srs_info_pack);
+  // int32_t rec_signal_power;
+  // int32_t rec_noise_power;
+  srs_info_pack->n_estimation = frame_parms->nb_antennas_rx;
+  NRpose__NRSRSINFO **ls_srs_data;
+  ls_srs_data = malloc(sizeof(NRpose__RESULT) * frame_parms->nb_antennas_rx * N_ap * M_sc_b_SRS);
   for (int ant = 0; ant < frame_parms->nb_antennas_rx; ant++) {
-
+    //[protobuf] Initialize NR_SRS_INFO，此处为两层循环，每次循环保留一断复数组Nrpose__RESULT
+    NRpose__NRSRSINFO * srs_info;
+    srs_info = malloc(sizeof(NRpose__NRSRSINFO));
+    nrpose__nr__srs__info__init(srs_info);
+    srs_info->n_ls_srs = N_ap * M_sc_b_SRS;
+    NRpose__RESULT ** srs_results;
+    srs_results = malloc(sizeof(NRpose__RESULT) * srs_info->n_ls_srs);
     for (int p_index = 0; p_index < N_ap; p_index++) {
 
       memset(srs_ls_estimated_channel, 0, frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols)*sizeof(c16_t));
       memset(srs_est, 0, (frame_parms->ofdm_symbol_size*(1<<srs_pdu->num_symbols) + mem_offset)*sizeof(int32_t));
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
       LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
-#endif
+// #endif
 
       uint16_t subcarrier = subcarrier_offset + nr_srs_info->k_0_p[p_index][0];
       if (subcarrier>frame_parms->ofdm_symbol_size) {
@@ -765,22 +787,31 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
         srs_ls_estimated_channel[subcarrier].r = ls_estimated[0];
         srs_ls_estimated_channel[subcarrier].i = ls_estimated[1];
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
         int subcarrier_log = subcarrier-subcarrier_offset;
         if(subcarrier_log < 0) {
           subcarrier_log = subcarrier_log + frame_parms->ofdm_symbol_size;
         }
+#ifdef SRS_DEBUG
         if(subcarrier_log%12 == 0) {
           LOG_I(NR_PHY,"------------------------------------ %d ------------------------------------\n", subcarrier_log/12);
           LOG_I(NR_PHY,"\t  __genRe________genIm__|____rxRe_________rxIm__|____lsRe________lsIm_\n");
         }
+
         LOG_I(NR_PHY,"(%4i) %6i\t%6i  |  %6i\t%6i  |  %6i\t%6i\n",
               subcarrier_log,
               ((c16_t*)srs_generated_signal[p_index])[subcarrier].r, ((c16_t*)srs_generated_signal[p_index])[subcarrier].i,
               ((c16_t*)srs_received_signal[ant])[subcarrier].r, ((c16_t*)srs_received_signal[ant])[subcarrier].i,
               ls_estimated[0], ls_estimated[1]);
 #endif
-
+        //[Protobuf] Initialize complex number
+        NRpose__RESULT * ls_item;
+        ls_item = malloc(sizeof(NRpose__RESULT));
+        nrpose__result__init(ls_item);
+        ls_item->real = ls_estimated[0];
+        ls_item->image = ls_estimated[1];
+        srs_results[subcarrier_log/2] = ls_item;
+        
         const uint16_t sc_offset = subcarrier + mem_offset;
 
         // Channel interpolation
@@ -900,6 +931,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
              (gNB->frame_parms.ofdm_symbol_size>>1)*sizeof(int32_t));
 
     } // for (int p_index = 0; p_index < N_ap; p_index++)
+    srs_info->ls_srs = srs_results;
+    ls_srs_data[ant]=srs_info;
+
   } // for (int ant = 0; ant < frame_parms->nb_antennas_rx; ant++)
 
   // Compute signal power
@@ -965,6 +999,28 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"noise_power = %u, SNR = %i dB\n", noise_power, *snr);
 #endif
+  srs_info_pack->signal_power = signal_power;
+  srs_info_pack->noise_power = noise_power;
+  srs_info_pack->estimation = ls_srs_data;
+
+  // Socket Send Protobuf
+  int length = nrpose__nr__srs__pack__get_packed_size(srs_info_pack);
+  void *buffer = malloc(sizeof(uint8_t) * length);
+  nrpose__nr__srs__pack__pack(srs_info_pack,buffer);
+  int sockfd = socket(AF_INET,SOCK_DGRAM, 0);
+  if(sockfd < 0){
+        perror("sockfd");
+        return -1;
+    }
+    struct sockaddr_in ser;
+    ser.sin_family = AF_INET;
+    ser.sin_port = htons(TRANSPORT_PORT);
+    ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
+    sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
+    close(sockfd);
+    // free(gen_srs_data);
+    // free(rec_srs_data);
+    free(ls_srs_data);
 
   return 0;
 }
