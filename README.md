@@ -48,3 +48,8 @@ sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/g
 ```bash
 sudo ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --ue-fo-compensation --sa -E --uicc0.imsi 466920000000003
 ```
+
+## Run OAI nrUE with N310
+```bash
+sudo ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --ue-fo-compensation --sa --uicc0.imsi 466920000000003 --usrp-args "addr=192.168.20.2"
+```
