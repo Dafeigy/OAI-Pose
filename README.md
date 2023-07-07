@@ -11,7 +11,7 @@ git clone https://github.com/protocolbuffers/protobuf.git
 ```bash
 sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.133
 
-sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.133
+sudo route add -net 10.61.0.0 netmask 255.255.255.0 gw 192.168.0.133
 
 
 ```
