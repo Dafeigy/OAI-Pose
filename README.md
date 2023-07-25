@@ -22,7 +22,6 @@ sudo route add -net 10.61.0.0 netmask 255.255.255.0 gw 192.168.0.133
 cd NR-pose
 source oaienv
 cd cmake_targets
-sudo ./build_oai -w USRP --ninja --gNB -c
 ```
 
 ## Run OAI-pose

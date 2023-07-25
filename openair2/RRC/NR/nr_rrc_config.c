@@ -141,7 +141,7 @@ static void set_csirs_periodicity(NR_NZP_CSI_RS_Resource_t *nzpcsi0, int uid, in
 {
   nzpcsi0->periodicityAndOffset = calloc(1,sizeof(*nzpcsi0->periodicityAndOffset));
   int ideal_period = nb_slots_per_period * MAX_MOBILES_PER_GNB;
-
+  // LOG_I(NR_RRC,"ideal_period = %d\n",ideal_period);
   if (ideal_period<5) {
     nzpcsi0->periodicityAndOffset->present = NR_CSI_ResourcePeriodicityAndOffset_PR_slots4;
     nzpcsi0->periodicityAndOffset->choice.slots4 = nb_slots_per_period*uid;
@@ -252,12 +252,13 @@ static void config_csirs(const NR_ServingCellConfigCommon_t *servingcellconfigco
       default:
         AssertFatal(1==0,"Number of ports not yet supported\n");
     }
-    resourceMapping.firstOFDMSymbolInTimeDomain = 13;  // last symbol of slot
+    resourceMapping.firstOFDMSymbolInTimeDomain = 12;  // last symbol of slot
     resourceMapping.firstOFDMSymbolInTimeDomain2 = NULL;
     resourceMapping.density.present = NR_CSI_RS_ResourceMapping__density_PR_one;
     resourceMapping.density.choice.one = (NULL_t)0;
     resourceMapping.freqBand.startingRB = 0;
     resourceMapping.freqBand.nrofRBs = ((curr_bwp>>2)+(curr_bwp%4>0))<<2;
+    LOG_I(NR_RRC,"nrofRBs = %ld\n",resourceMapping.freqBand.nrofRBs);
     nzpcsi0->resourceMapping = resourceMapping;
     nzpcsi0->powerControlOffset = 0;
     nzpcsi0->powerControlOffsetSS=calloc(1,sizeof(*nzpcsi0->powerControlOffsetSS));
@@ -411,67 +412,83 @@ static struct NR_SRS_Resource__resourceType__periodic *configure_periodic_srs(co
   const int ul_slots_period = tdd ? tdd->nrofUplinkSlots : n_slots_frame;
   const int n_slots_period = tdd ? n_slots_frame/get_nb_periods_per_frame(tdd->dl_UL_TransmissionPeriodicity) : n_slots_frame;
   const int first_full_ul_slot = n_slots_period - ul_slots_period;
-  const int ideal_period = n_slots_period * MAX_MOBILES_PER_GNB;
+  // const int ideal_period = n_slots_period * MAX_MOBILES_PER_GNB;
+  const int ideal_period = 320;
   struct NR_SRS_Resource__resourceType__periodic *periodic_srs = calloc(1,sizeof(*periodic_srs));
   if (ideal_period < 5) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl4;
     periodic_srs->periodicityAndOffset_p.choice.sl4 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl4");
   }
   else if (ideal_period < 6) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl5;
     periodic_srs->periodicityAndOffset_p.choice.sl5 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl5");
   }
   else if (ideal_period < 9) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl8;
     periodic_srs->periodicityAndOffset_p.choice.sl8 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl8");
   }
   else if (ideal_period < 11) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl10;
     periodic_srs->periodicityAndOffset_p.choice.sl10 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl10");
   }
   else if (ideal_period < 17) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl16;
     periodic_srs->periodicityAndOffset_p.choice.sl16 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl16");
   }
   else if (ideal_period < 21) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl20;
     periodic_srs->periodicityAndOffset_p.choice.sl20 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl20");
   }
   else if (ideal_period < 33) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl32;
     periodic_srs->periodicityAndOffset_p.choice.sl32 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl32");
   }
   else if (ideal_period < 41) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl40;
     periodic_srs->periodicityAndOffset_p.choice.sl40 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+        LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl40");
   }
   else if (ideal_period < 65) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl64;
     periodic_srs->periodicityAndOffset_p.choice.sl64 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+    LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl64");
   }
   else if (ideal_period < 81) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl80;
     periodic_srs->periodicityAndOffset_p.choice.sl80 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+    LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl80");
   }
   else if (ideal_period < 161) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl160;
     periodic_srs->periodicityAndOffset_p.choice.sl160 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+    LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl160");
   }
   else if (ideal_period < 321) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl320;
     periodic_srs->periodicityAndOffset_p.choice.sl320 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+    LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl320");
   }
   else if (ideal_period < 641) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl640;
     periodic_srs->periodicityAndOffset_p.choice.sl640 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+    LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl640");
   }
   else if (ideal_period < 1281) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl1280;
     periodic_srs->periodicityAndOffset_p.choice.sl1280 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+    LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl1280");
   }
   else {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl2560;
     periodic_srs->periodicityAndOffset_p.choice.sl2560 = first_full_ul_slot + (uid % ul_slots_period) + (n_slots_period * (uid / ul_slots_period));
+      LOG_I(NR_PHY,"SRS-periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl2560");
   }
   return periodic_srs;
 }
@@ -532,6 +549,7 @@ static void config_srs(const NR_ServingCellConfigCommon_t *scc,
     srs_resset0->resourceType.choice.aperiodic->ext1 = NULL;
   }
   srs_resset0->usage=NR_SRS_ResourceSet__usage_codebook;
+  
   srs_resset0->alpha = calloc(1,sizeof(*srs_resset0->alpha));
   *srs_resset0->alpha = NR_Alpha_alpha1;
   srs_resset0->p0 = calloc(1,sizeof(*srs_resset0->p0));
@@ -545,7 +563,10 @@ static void config_srs(const NR_ServingCellConfigCommon_t *scc,
   srs_Config->srs_ResourceToAddModList = calloc(1,sizeof(*srs_Config->srs_ResourceToAddModList));
   NR_SRS_Resource_t *srs_res0=calloc(1,sizeof(*srs_res0));
   srs_res0->srs_ResourceId = res_id;
-  srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_port1;
+  // srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_port1; 
+  // [N310-SRS] N310 2ports Change Here
+  srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_ports2; 
+
   if (do_srs) {
     long nrofSRS_Ports = 1;
     if (uecap &&
@@ -1321,6 +1342,7 @@ static void config_uplinkBWP(NR_BWP_Uplink_t *ubwp,
                             *servingcellconfigdedicated->uplinkConfig->pusch_ServingCellConfig->choice.setup->ext1->maxMIMO_Layers : 1;
 
   ubwp->bwp_Dedicated->srs_Config = calloc(1,sizeof(*ubwp->bwp_Dedicated->srs_Config));
+  LOG_I(NR_RRC,"maxMIMO_Layers : %d\n",maxMIMO_Layers);
   config_srs(scc,
              ubwp->bwp_Dedicated->srs_Config,
              NULL,
@@ -1329,7 +1351,7 @@ static void config_uplinkBWP(NR_BWP_Uplink_t *ubwp,
              bwp_loop+1,
              maxMIMO_Layers,
              configuration->do_SRS);
-
+  LOG_I(NR_RRC,"maxsrs : %d\n",ubwp->bwp_Dedicated->srs_Config->choice.setup->srs_ResourceToAddModList->list.array[0]->nrofSRS_Ports);
   ubwp->bwp_Dedicated->configuredGrantConfig = NULL;
   ubwp->bwp_Dedicated->beamFailureRecoveryConfig = NULL;
 }
@@ -1355,6 +1377,8 @@ static void set_csi_meas_periodicity(const NR_ServingCellConfigCommon_t *scc, NR
   const int first_ul_slot_period = tdd ? get_first_ul_slot(tdd->nrofDownlinkSlots, tdd->nrofDownlinkSymbols, tdd->nrofUplinkSymbols) : 0;
   const int idx = (uid << 1) + is_rsrp;
   const int offset = first_ul_slot_period + idx % n_ul_slots_period + (idx / n_ul_slots_period) * n_slots_period;
+  LOG_I(NR_RRC, " slot offset = %d \n", offset);
+  LOG_I(NR_RRC, " ideal_period = %d \n", ideal_period);
 
   if (ideal_period < 5) {
     csirep->reportConfigType.choice.periodic->reportSlotConfig.present = NR_CSI_ReportPeriodicityAndOffset_PR_slots4;
@@ -2419,6 +2443,7 @@ void update_cellGroupConfig(NR_CellGroupConfig_t *cellGroupConfig,
     if (!uplinkConfig->initialUplinkBWP->srs_Config) {
       uplinkConfig->initialUplinkBWP->srs_Config = calloc(1, sizeof(*uplinkConfig->initialUplinkBWP->srs_Config));
     }
+
     config_srs(scc,
                SpCellConfig->spCellConfigDedicated->uplinkConfig->initialUplinkBWP->srs_Config,
                uecap,
