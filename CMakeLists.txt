@@ -2285,8 +2285,8 @@ add_executable(nr-softmodem
   ${SHLIB_LOADER_SOURCES}
   ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/srs-info.pb-c.h
   ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/srs-info.pb-c.c
-  ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/ul_est.pb-c.h
-  ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/ul_est.pb-c.c
+  ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/ul_srs_est.pb-c.h
+  ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/ul_srs_est.pb-c.c
   ${OPENAIR_DIR}/protobuf-c/protobuf-c/protobuf-c.c
   ${OPENAIR_DIR}/protobuf-c/protobuf-c/protobuf-c.h
   )

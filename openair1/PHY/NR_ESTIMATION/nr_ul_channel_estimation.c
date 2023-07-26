@@ -44,7 +44,7 @@
 //#define DEBUG_CH
 //#define DEBUG_PUSCH
 //#define SRS_DEBUG
-#include "MESSAGES/ul_est.pb-c.h"
+#include "MESSAGES/ul_srs_est.pb-c.h"
 #define TRANSPORT_ADDR "192.168.0.139"
 #define TRANSPORT_PORT 7776
 
@@ -692,7 +692,8 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
                               int32_t srs_estimated_channel_time_shifted[][1<<srs_pdu->num_ant_ports][gNB->frame_parms.ofdm_symbol_size],
                               int8_t *snr_per_rb,
                               int8_t *snr) {
-
+  static int64_t ul_est_cnt = 0;
+  ul_est_cnt ++;
 #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"Calling %s function\n", __FUNCTION__);
 #endif
@@ -1007,6 +1008,8 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   srs_info_pack->signal_power = signal_power;
   srs_info_pack->noise_power = noise_power;
   srs_info_pack->estimation = ls_srs_data;
+  srs_info_pack->func_cnt = ul_est_cnt;
+  srs_info_pack->call_time = start_time.tv_nsec;
 
   // Socket Send Protobuf
   int length = nrpose__nr__srs__pack__get_packed_size(srs_info_pack);
@@ -1023,13 +1026,11 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
     ser.sin_addr.s_addr = inet_addr(TRANSPORT_ADDR);
     sendto(sockfd, buffer, length, 0, (struct sockaddr *)&ser, sizeof(ser));
     close(sockfd);
-    // free(gen_srs_data);
-    // free(rec_srs_data);
     free(ls_srs_data);
   clock_gettime(CLOCK_REALTIME, &end_time);
-  // |ThreadID|StartTime|EndTime|Duration|
-  LOG_I(NR_PHY,"||ThreadID|StartTime|EndTime|Duration|\n");
-  LOG_I(NR_PHY,"|%d|%d|%d|%d|\n",threadID,start_time.tv_nsec,end_time.tv_nsec,end_time.tv_nsec-start_time.tv_nsec);
+  // |FUNC_CNT|ThreadID|StartTime|EndTime|Duration|
+  LOG_I(NR_PHY,"|FUNC_CNT|ThreadID|StartTime|EndTime|Duration|\n");
+  LOG_I(NR_PHY,"|%6d|%d|%d|%d|%d|\n",ul_est_cnt,threadID,start_time.tv_nsec,end_time.tv_nsec,end_time.tv_nsec-start_time.tv_nsec);
   
   return 0;
   
