@@ -413,7 +413,7 @@ static struct NR_SRS_Resource__resourceType__periodic *configure_periodic_srs(co
   const int n_slots_period = tdd ? n_slots_frame/get_nb_periods_per_frame(tdd->dl_UL_TransmissionPeriodicity) : n_slots_frame;
   const int first_full_ul_slot = n_slots_period - ul_slots_period;
   // const int ideal_period = n_slots_period * MAX_MOBILES_PER_GNB;
-  const int ideal_period = 320;
+  const int ideal_period = 160;
   struct NR_SRS_Resource__resourceType__periodic *periodic_srs = calloc(1,sizeof(*periodic_srs));
   if (ideal_period < 5) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl4;

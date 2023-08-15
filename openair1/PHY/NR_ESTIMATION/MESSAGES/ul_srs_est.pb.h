@@ -144,6 +144,21 @@ class NR_SRS_PACK : public ::google::protobuf::Message /* @@protoc_insertion_poi
   const ::google::protobuf::RepeatedPtrField< ::NRpose::NR_SRS_INFO >&
       estimation() const;
 
+  // required string START_TIME = 7;
+  bool has_start_time() const;
+  void clear_start_time();
+  static const int kSTARTTIMEFieldNumber = 7;
+  const ::std::string& start_time() const;
+  void set_start_time(const ::std::string& value);
+  #if LANG_CXX11
+  void set_start_time(::std::string&& value);
+  #endif
+  void set_start_time(const char* value);
+  void set_start_time(const char* value, size_t size);
+  ::std::string* mutable_start_time();
+  ::std::string* release_start_time();
+  void set_allocated_start_time(::std::string* start_time);
+
   // required int32 SIGNAL_POWER = 2;
   bool has_signal_power() const;
   void clear_signal_power();
@@ -182,6 +197,8 @@ class NR_SRS_PACK : public ::google::protobuf::Message /* @@protoc_insertion_poi
   void clear_has_call_time();
   void set_has_func_cnt();
   void clear_has_func_cnt();
+  void set_has_start_time();
+  void clear_has_start_time();
 
   // helper for ByteSizeLong()
   size_t RequiredFieldsByteSizeFallback() const;
@@ -190,6 +207,7 @@ class NR_SRS_PACK : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable int _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::NRpose::NR_SRS_INFO > estimation_;
+  ::google::protobuf::internal::ArenaStringPtr start_time_;
   ::google::protobuf::int32 signal_power_;
   ::google::protobuf::int32 noise_power_;
   ::google::protobuf::int32 call_time_;
@@ -436,13 +454,13 @@ NR_SRS_PACK::estimation() const {
 
 // required int32 SIGNAL_POWER = 2;
 inline bool NR_SRS_PACK::has_signal_power() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
 inline void NR_SRS_PACK::set_has_signal_power() {
-  _has_bits_[0] |= 0x00000001u;
+  _has_bits_[0] |= 0x00000002u;
 }
 inline void NR_SRS_PACK::clear_has_signal_power() {
-  _has_bits_[0] &= ~0x00000001u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void NR_SRS_PACK::clear_signal_power() {
   signal_power_ = 0;
@@ -460,13 +478,13 @@ inline void NR_SRS_PACK::set_signal_power(::google::protobuf::int32 value) {
 
 // required int32 NOISE_POWER = 3;
 inline bool NR_SRS_PACK::has_noise_power() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void NR_SRS_PACK::set_has_noise_power() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void NR_SRS_PACK::clear_has_noise_power() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void NR_SRS_PACK::clear_noise_power() {
   noise_power_ = 0;
@@ -484,13 +502,13 @@ inline void NR_SRS_PACK::set_noise_power(::google::protobuf::int32 value) {
 
 // required int32 CALL_TIME = 5;
 inline bool NR_SRS_PACK::has_call_time() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void NR_SRS_PACK::set_has_call_time() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void NR_SRS_PACK::clear_has_call_time() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void NR_SRS_PACK::clear_call_time() {
   call_time_ = 0;
@@ -508,13 +526,13 @@ inline void NR_SRS_PACK::set_call_time(::google::protobuf::int32 value) {
 
 // required int32 FUNC_CNT = 6;
 inline bool NR_SRS_PACK::has_func_cnt() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void NR_SRS_PACK::set_has_func_cnt() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void NR_SRS_PACK::clear_has_func_cnt() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void NR_SRS_PACK::clear_func_cnt() {
   func_cnt_ = 0;
@@ -528,6 +546,69 @@ inline void NR_SRS_PACK::set_func_cnt(::google::protobuf::int32 value) {
   set_has_func_cnt();
   func_cnt_ = value;
   // @@protoc_insertion_point(field_set:NRpose.NR_SRS_PACK.FUNC_CNT)
+}
+
+// required string START_TIME = 7;
+inline bool NR_SRS_PACK::has_start_time() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void NR_SRS_PACK::set_has_start_time() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void NR_SRS_PACK::clear_has_start_time() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void NR_SRS_PACK::clear_start_time() {
+  start_time_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_start_time();
+}
+inline const ::std::string& NR_SRS_PACK::start_time() const {
+  // @@protoc_insertion_point(field_get:NRpose.NR_SRS_PACK.START_TIME)
+  return start_time_.GetNoArena();
+}
+inline void NR_SRS_PACK::set_start_time(const ::std::string& value) {
+  set_has_start_time();
+  start_time_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:NRpose.NR_SRS_PACK.START_TIME)
+}
+#if LANG_CXX11
+inline void NR_SRS_PACK::set_start_time(::std::string&& value) {
+  set_has_start_time();
+  start_time_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:NRpose.NR_SRS_PACK.START_TIME)
+}
+#endif
+inline void NR_SRS_PACK::set_start_time(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  set_has_start_time();
+  start_time_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:NRpose.NR_SRS_PACK.START_TIME)
+}
+inline void NR_SRS_PACK::set_start_time(const char* value, size_t size) {
+  set_has_start_time();
+  start_time_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:NRpose.NR_SRS_PACK.START_TIME)
+}
+inline ::std::string* NR_SRS_PACK::mutable_start_time() {
+  set_has_start_time();
+  // @@protoc_insertion_point(field_mutable:NRpose.NR_SRS_PACK.START_TIME)
+  return start_time_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NR_SRS_PACK::release_start_time() {
+  // @@protoc_insertion_point(field_release:NRpose.NR_SRS_PACK.START_TIME)
+  clear_has_start_time();
+  return start_time_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NR_SRS_PACK::set_allocated_start_time(::std::string* start_time) {
+  if (start_time != NULL) {
+    set_has_start_time();
+  } else {
+    clear_has_start_time();
+  }
+  start_time_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), start_time);
+  // @@protoc_insertion_point(field_set_allocated:NRpose.NR_SRS_PACK.START_TIME)
 }
 
 // -------------------------------------------------------------------

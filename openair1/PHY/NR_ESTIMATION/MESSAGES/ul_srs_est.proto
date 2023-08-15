@@ -8,6 +8,7 @@ message NR_SRS_PACK{
   required int32 NOISE_POWER = 3;
   required int32 CALL_TIME = 5;
   required int32 FUNC_CNT = 6;
+  required string START_TIME = 7;
 }
 message NR_SRS_INFO{
   repeated RESULT LS_SRS  = 3;

@@ -142,7 +142,7 @@ void   nrpose__result__free_unpacked
   assert(message->base.descriptor == &nrpose__result__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor nrpose__nr__srs__pack__field_descriptors[5] =
+static const ProtobufCFieldDescriptor nrpose__nr__srs__pack__field_descriptors[6] =
 {
   {
     "ESTIMATION",
@@ -204,6 +204,18 @@ static const ProtobufCFieldDescriptor nrpose__nr__srs__pack__field_descriptors[5
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
+  {
+    "START_TIME",
+    7,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(NRpose__NRSRSPACK, start_time),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
 };
 static const unsigned nrpose__nr__srs__pack__field_indices_by_name[] = {
   3,   /* field[3] = CALL_TIME */
@@ -211,12 +223,13 @@ static const unsigned nrpose__nr__srs__pack__field_indices_by_name[] = {
   4,   /* field[4] = FUNC_CNT */
   2,   /* field[2] = NOISE_POWER */
   1,   /* field[1] = SIGNAL_POWER */
+  5,   /* field[5] = START_TIME */
 };
 static const ProtobufCIntRange nrpose__nr__srs__pack__number_ranges[2 + 1] =
 {
   { 1, 0 },
   { 5, 3 },
-  { 0, 5 }
+  { 0, 6 }
 };
 const ProtobufCMessageDescriptor nrpose__nr__srs__pack__descriptor =
 {
@@ -226,7 +239,7 @@ const ProtobufCMessageDescriptor nrpose__nr__srs__pack__descriptor =
   "NRpose__NRSRSPACK",
   "NRpose",
   sizeof(NRpose__NRSRSPACK),
-  5,
+  6,
   nrpose__nr__srs__pack__field_descriptors,
   nrpose__nr__srs__pack__field_indices_by_name,
   2,  nrpose__nr__srs__pack__number_ranges,
