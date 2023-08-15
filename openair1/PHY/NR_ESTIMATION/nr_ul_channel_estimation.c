@@ -705,7 +705,7 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   // clock_gettime(CLOCK_REALTIME, &start_time);
   struct  timeval start_time;
   struct  timeval end_time;
-  gettimeofday(&start_time);
+  gettimeofday(&start_time, NULL);
   {
     /* data */
   };
@@ -1074,10 +1074,10 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 #endif
   // // 纳秒
   // clock_gettime(CLOCK_REALTIME, &end_time);
-  gettimeofday(&end_time);
+  gettimeofday(&end_time, NULL);
   // |FUNC_CNT|ThreadID|StartTime|EndTime|Duration|
   LOG_I(NR_PHY,"|FUNC_CNT|ThreadID|StartTime|EndTime|Duration|\n");
-  LOG_I(NR_PHY,"|%6d|%d|%d|%d|%d|\n",ul_est_cnt,threadID,start_time.tv_usec,end_time.tv_usec,end_time.tv_usec-start_time.tv_usec);
+  LOG_I(NR_PHY,"|%6d|%d|%d|%9d|%d|\n",ul_est_cnt,threadID,start_time.tv_usec + start_time.tv_sec * 1000000,end_time.tv_usec + end_time.tv_sec * 1000000,end_time.tv_usec-start_time.tv_usec);
   
   return 0;
   

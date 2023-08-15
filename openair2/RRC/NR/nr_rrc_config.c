@@ -563,9 +563,9 @@ static void config_srs(const NR_ServingCellConfigCommon_t *scc,
   srs_Config->srs_ResourceToAddModList = calloc(1,sizeof(*srs_Config->srs_ResourceToAddModList));
   NR_SRS_Resource_t *srs_res0=calloc(1,sizeof(*srs_res0));
   srs_res0->srs_ResourceId = res_id;
-  // srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_port1; 
+  srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_port1; 
   // [N310-SRS] N310 2ports Change Here
-  srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_ports2; 
+  // srs_res0->nrofSRS_Ports = NR_SRS_Resource__nrofSRS_Ports_ports2; 
 
   if (do_srs) {
     long nrofSRS_Ports = 1;
