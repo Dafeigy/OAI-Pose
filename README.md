@@ -1,3 +1,9 @@
+## Enable Proto transmit
+
+Before compile, cancel the annotation `#def DO_PROTO` in `openair1/PHY/NR_ESTIMATION/nr_ul_channel_estimation.c` to enable proto message repost.
+
+
+
 ## Extra dependencies
 ```bash
 cd NR-Pose
@@ -51,4 +57,9 @@ sudo ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --ue-fo-comp
 ## Run OAI nrUE with N310
 ```bash
 sudo ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --ue-fo-compensation --sa --uicc0.imsi 466920000000003 --usrp-args "addr=192.168.20.2"
+```
+
+## Run gNB 4x4 MIMO
+```bash
+sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/162PRB.4x4.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
 ```
