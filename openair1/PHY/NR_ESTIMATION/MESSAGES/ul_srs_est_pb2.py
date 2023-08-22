@@ -19,8 +19,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='ul_srs_est.proto',
   package='NRpose',
   syntax='proto2',
-  serialized_pb=_b('\n\x10ul_srs_est.proto\x12\x06NRpose\"\x9a\x01\n\x0bNR_SRS_PACK\x12\'\n\nESTIMATION\x18\x01 \x03(\x0b\x32\x13.NRpose.NR_SRS_INFO\x12\x14\n\x0cSIGNAL_POWER\x18\x02 \x02(\x05\x12\x13\n\x0bNOISE_POWER\x18\x03 \x02(\x05\x12\x11\n\tCALL_TIME\x18\x05 \x02(\x05\x12\x10\n\x08\x46UNC_CNT\x18\x06 \x02(\x05\x12\x12\n\nSTART_TIME\x18\x07 \x02(\t\"-\n\x0bNR_SRS_INFO\x12\x1e\n\x06LS_SRS\x18\x03 \x03(\x0b\x32\x0e.NRpose.RESULT\"%\n\x06RESULT\x12\r\n\x05image\x18\x01 \x02(\x05\x12\x0c\n\x04real\x18\x02 \x02(\x05')
+  serialized_pb=_b('\n\x10ul_srs_est.proto\x12\x06NRpose\"\x86\x01\n\x0bNR_SRS_PACK\x12\'\n\nESTIMATION\x18\x01 \x03(\x0b\x32\x13.NRpose.NR_SRS_INFO\x12\x14\n\x0cSIGNAL_POWER\x18\x02 \x02(\x05\x12\x13\n\x0bNOISE_POWER\x18\x03 \x02(\x05\x12\x11\n\tCALL_TIME\x18\x05 \x02(\x05\x12\x10\n\x08\x46UNC_CNT\x18\x06 \x02(\x05\"-\n\x0bNR_SRS_INFO\x12\x1e\n\x06LS_SRS\x18\x03 \x03(\x0b\x32\x0e.NRpose.RESULT\"%\n\x06RESULT\x12\r\n\x05image\x18\x01 \x02(\x05\x12\x0c\n\x04real\x18\x02 \x02(\x05')
 )
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -67,13 +68,6 @@ _NR_SRS_PACK = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
-    _descriptor.FieldDescriptor(
-      name='START_TIME', full_name='NRpose.NR_SRS_PACK.START_TIME', index=5,
-      number=7, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
   ],
   extensions=[
   ],
@@ -87,7 +81,7 @@ _NR_SRS_PACK = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=29,
-  serialized_end=183,
+  serialized_end=163,
 )
 
 
@@ -117,8 +111,8 @@ _NR_SRS_INFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=185,
-  serialized_end=230,
+  serialized_start=165,
+  serialized_end=210,
 )
 
 
@@ -155,8 +149,8 @@ _RESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=232,
-  serialized_end=269,
+  serialized_start=212,
+  serialized_end=249,
 )
 
 _NR_SRS_PACK.fields_by_name['ESTIMATION'].message_type = _NR_SRS_INFO
@@ -164,7 +158,6 @@ _NR_SRS_INFO.fields_by_name['LS_SRS'].message_type = _RESULT
 DESCRIPTOR.message_types_by_name['NR_SRS_PACK'] = _NR_SRS_PACK
 DESCRIPTOR.message_types_by_name['NR_SRS_INFO'] = _NR_SRS_INFO
 DESCRIPTOR.message_types_by_name['RESULT'] = _RESULT
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 NR_SRS_PACK = _reflection.GeneratedProtocolMessageType('NR_SRS_PACK', (_message.Message,), dict(
   DESCRIPTOR = _NR_SRS_PACK,

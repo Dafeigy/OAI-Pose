@@ -1048,7 +1048,6 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   //           timeinfo->tm_min, 
   //           timeinfo->tm_sec,
   //           start_time.tv_usec%1000000);
-  srs_info_pack->start_time = "HI";
 
 // LOG_I(NR_PHY,time_buffer);
 #endif

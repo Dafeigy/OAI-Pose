@@ -853,27 +853,22 @@ add_library(SCHED_NR_UE_LIB ${SCHED_SRC_NR_UE})
 target_link_libraries(SCHED_NR_UE_LIB PRIVATE asn1_lte_rrc_hdrs asn1_nr_rrc_hdrs)
 
 find_package(Protobuf REQUIRED)
-# if (PROTOBUF_FOUND)
-#     message("protobuf found")
-# else ()
-#     message(FATAL_ERROR "Cannot find Protobuf")
-# endif ()
 include_directories(${OPENAIR_DIR}/protobuf-c)
 message("-- Start protobuf generating...")
 # 旧的protobuf
 set(protobuf_generated_dir ${OPENAIR_BIN_DIR})
-set(SRS_TRAN_MSG_DIR ${OPENAIR1_DIR}/SCHED_NR/MESSAGES/)
+set(SRS_TRAN_MSG_DIR ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES)
 set(SRS_TRAN_MSG_FILES
-  ${SRS_TRAN_MSG_DIR}/ srs-info.proto
+  ul_srs_est.proto
   )
 # message(${SRS_TRAN_MSG_FILES})
-execute_process(COMMAND protoc --proto_path==${SRS_TRAN_MSG_FILES} --c_out=${SRS_TRAN_MSG_DIR} --python_out=${SRS_TRAN_MSG_DIR})
+execute_process(COMMAND protoc -I ${SRS_TRAN_MSG_DIR} --python_out=${SRS_TRAN_MSG_DIR} ${SRS_TRAN_MSG_DIR}/${SRS_TRAN_MSG_FILES})
+execute_process(COMMAND protoc-c -I ${SRS_TRAN_MSG_DIR} --c_out=${SRS_TRAN_MSG_DIR} ${SRS_TRAN_MSG_DIR}/${SRS_TRAN_MSG_FILES})
 
-
-set(SRS_DETAILED_MSG_DIR ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/) 
-set(SRS_DETAILED_MSG_FILES ${SRS_DETAILED_MSG_DIR}/ ul_est.proto)
-# message(${SRS_DETAILED_MSG_FILES})
-execute_process(COMMAND protoc --proto_path=${SRS_DETAILED_MSG_DIR}/ul-_est.proto --c_out=${SRS_DETAILED_MSG_DIR} --python_out=${SRS_DETAILED_MSG_DIR} )
+# set(SRS_DETAILED_MSG_DIR ${OPENAIR1_DIR}/PHY/NR_ESTIMATION/MESSAGES/) 
+# set(SRS_DETAILED_MSG_FILES ${SRS_DETAILED_MSG_DIR}/ ul_est.proto)
+# # message(${SRS_DETAILED_MSG_FILES})
+# execute_process(COMMAND protoc --proto_path=${SRS_DETAILED_MSG_DIR}/ul-_est.proto --c_out=${SRS_DETAILED_MSG_DIR} --python_out=${SRS_DETAILED_MSG_DIR} )
 message("-- END FOR PROTOBUF GENERATION --")
 # nFAPI
 #################################

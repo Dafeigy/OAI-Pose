@@ -34,11 +34,10 @@ struct  _NRpose__NRSRSPACK
   int32_t noise_power;
   int32_t call_time;
   int32_t func_cnt;
-  char *start_time;
 };
 #define NRPOSE__NR__SRS__PACK__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&nrpose__nr__srs__pack__descriptor) \
-    , 0,NULL, 0, 0, 0, 0, NULL }
+    , 0,NULL, 0, 0, 0, 0 }
 
 
 struct  _NRpose__NRSRSINFO
