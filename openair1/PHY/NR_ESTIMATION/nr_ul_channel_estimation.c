@@ -47,7 +47,7 @@
 #include "MESSAGES/ul_srs_est.pb-c.h"
 #define TRANSPORT_ADDR "192.168.0.139"
 #define TRANSPORT_PORT 7776
-// #define DO_PROTO
+#define DO_PROTO
 
 
 #define NO_INTERP 1
@@ -957,7 +957,7 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
              (gNB->frame_parms.ofdm_symbol_size>>1)*sizeof(int32_t));
 #ifdef DO_PROTO
       srs_info->ls_srs = srs_results;
-      ls_srs_data[ant * 2 + p_index] = srs_info;
+      ls_srs_data[ant * N_ap + p_index] = srs_info;
 #endif
     } // for (int p_index = 0; p_index < N_ap; p_index++)
   } // for (int ant = 0; ant < frame_parms->nb_antennas_rx; ant++)
@@ -966,9 +966,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   uint32_t signal_power = calc_power(ch_real,frame_parms->nb_antennas_rx*N_ap*M_sc_b_SRS)
                           + calc_power(ch_imag,frame_parms->nb_antennas_rx*N_ap*M_sc_b_SRS);
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"signal_power = %u\n", signal_power);
-#endif
+// #endif
 
   if (signal_power == 0) {
     LOG_W(NR_PHY, "Received SRS signal power is 0\n");
@@ -1022,9 +1022,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 
   *snr = dB_fixed((int32_t)((signal_power<<factor_bits)/(noise_power))) - factor_dB;
 
-#ifdef SRS_DEBUG
+// #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"noise_power = %u, SNR = %i dB\n", noise_power, *snr);
-#endif
+// #endif
 #ifdef DO_PROTO
   srs_info_pack->signal_power = signal_power;
   srs_info_pack->noise_power = noise_power;
@@ -1036,19 +1036,19 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   srs_info_pack->call_time = start_time.tv_usec;
 
 
-  time_t now = time(NULL);
-  // struct tm *timeinfo = localtime(&now);
-  struct tm *timeinfo;
-  localtime_r(&now,timeinfo);
-  char time_buffer[80];
-  sprintf(time_buffer,"%04d-%02d-%02d %02d:%02d:%02d.%09ld\n",timeinfo->tm_year+1900,
-            timeinfo->tm_mon+1, 
-            timeinfo->tm_mday,
-            timeinfo->tm_hour, 
-            timeinfo->tm_min, 
-            timeinfo->tm_sec,
-            start_time.tv_nsec%1000000000);
-  srs_info_pack->start_time = time_buffer;
+  // time_t now = time(NULL);
+  // // struct tm *timeinfo = localtime(&now);
+  // struct tm *timeinfo;
+  // localtime_r(&now,timeinfo);
+  // char time_buffer[80];
+  // sprintf(time_buffer,"%04d-%02d-%02d %02d:%02d:%02d.%09ld\n",timeinfo->tm_year+1900,
+  //           timeinfo->tm_mon+1, 
+  //           timeinfo->tm_mday,
+  //           timeinfo->tm_hour, 
+  //           timeinfo->tm_min, 
+  //           timeinfo->tm_sec,
+  //           start_time.tv_usec%1000000);
+  srs_info_pack->start_time = "HI";
 
 // LOG_I(NR_PHY,time_buffer);
 #endif
