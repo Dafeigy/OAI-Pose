@@ -38,7 +38,7 @@ extern uint16_t NB_UE_INST;
 /*   optname                     helpstr                     paramflags           XXXptr                               defXXXval                          type         numelt  */
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 #define UICC_PARAMS_DESC {\
-    {"imsi",             "USIM IMSI\n",          0,         strptr:&(uicc->imsiStr),              defstrval:"466920000000005",           TYPE_STRING,    0 },\
+    {"imsi",             "USIM IMSI\n",          0,         strptr:&(uicc->imsiStr),              defstrval:"466920000000003",           TYPE_STRING,    0 },\
     {"nmc_size"          "number of digits in NMC", 0,      iptr:&(uicc->nmc_size),               defintval:2,         TYPE_INT,       0 },\
     {"key",              "USIM Ki\n",            0,         strptr:&(uicc->keyStr),               defstrval:"8baf473f2f8fd09487cccbd7097c6862", TYPE_STRING,    0 },\
     {"opc",              "USIM OPc\n",           0,         strptr:&(uicc->opcStr),               defstrval:"8e27b6af0e692e750f32667a3b14605d", TYPE_STRING,    0 },\

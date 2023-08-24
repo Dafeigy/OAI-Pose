@@ -43,11 +43,12 @@
 
 //#define DEBUG_CH
 //#define DEBUG_PUSCH
-//#define SRS_DEBUG
+// #define SRS_DEBUG
 #include "MESSAGES/ul_srs_est.pb-c.h"
 #define TRANSPORT_ADDR "192.168.0.139"
 #define TRANSPORT_PORT 7776
-#define DO_PROTO
+// #define DO_PROTO
+#define DO_LOCAL
 
 
 #define NO_INTERP 1
@@ -694,6 +695,27 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
                               int8_t *snr_per_rb,
                               int8_t *snr) {
   static int64_t ul_est_cnt = 0;
+  static char filename[100];
+  static char filepath[100];
+  #ifdef DO_LOCAL
+  if (ul_est_cnt == 0){
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    
+    strftime(filename, sizeof(filename), "%Y-%m-%d_%H-%M-%S.log", timeinfo);
+    
+  }
+  sprintf(filepath, "../logs/%s", filename);
+  FILE *file = fopen(filepath, "a");
+    if (file == NULL) {
+        printf("Failed to Open file.\n");
+        return 1;
+    }
+    printf("File %s has been generated sucessfully.\n", filepath);  
+    
+  #endif
   ul_est_cnt ++;
 #ifdef SRS_DEBUG
   LOG_I(NR_PHY,"Calling %s function\n", __FUNCTION__);
@@ -706,13 +728,6 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   struct  timeval start_time;
   struct  timeval end_time;
   gettimeofday(&start_time, NULL);
-  {
-    /* data */
-  };
-  
-  {
-    /* data */
-  };
   
   const NR_DL_FRAME_PARMS *frame_parms = &gNB->frame_parms;
   const uint64_t subcarrier_offset = frame_parms->first_carrier_offset + srs_pdu->bwp_start*NR_NB_SC_PER_RB;
@@ -770,6 +785,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 
 // #ifdef SRS_DEBUG
       LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
+#ifdef DO_LOCAL
+      fprintf(file,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
+#endif
 // #endif
 
       uint16_t subcarrier = subcarrier_offset + nr_srs_info->k_0_p[p_index][0];
@@ -829,6 +847,9 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
               ls_estimated[0], ls_estimated[1]);
 #endif
         //[Protobuf] Initialize complex number
+#ifdef DO_LOCAL
+        fprintf(file,"{'re':%d,'im':%d},",ls_estimated[0], ls_estimated[1]);
+#endif
 #ifdef DO_PROTO
         NRpose__RESULT * ls_item;
         ls_item = malloc(sizeof(NRpose__RESULT));
@@ -1071,6 +1092,8 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
     close(sockfd);
     free(ls_srs_data);
 #endif
+
+
   // // 纳秒
   // clock_gettime(CLOCK_REALTIME, &end_time);
   gettimeofday(&end_time, NULL);
@@ -1078,6 +1101,10 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   LOG_I(NR_PHY,"|FUNC_CNT|ThreadID|StartTime|EndTime|Duration|\n");
   LOG_I(NR_PHY,"|%6d|%d|%d|%9d|%d|\n",ul_est_cnt,threadID,start_time.tv_usec + start_time.tv_sec * 1000000,end_time.tv_usec + end_time.tv_sec * 1000000,end_time.tv_usec-start_time.tv_usec);
   
+#ifdef DO_LOCAL
+  fprintf(file,"'FUNC_CNT':%d,'ThreadID':%d,'StartTime':%d,'EndTime':%d\n",ul_est_cnt,threadID,start_time.tv_usec + start_time.tv_sec * 1000000,end_time.tv_usec + end_time.tv_sec * 1000000);
+  fclose(file);
+#endif
   return 0;
   
 }
