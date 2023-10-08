@@ -927,7 +927,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
     if (srs) {//如果该块srs非空则执行下面语句
       if ((srs->active == 1) && (srs->frame == frame_rx) && (srs->slot == slot_rx)) {
         // srs此时状态激活 且 srs帧和frame_rx相同?? 然后时隙相同 ??
-        LOG_D(NR_PHY, "(%d.%d) gNB is waiting for SRS, id = %i\n", frame_rx, slot_rx, i);
+        // LOG_I(NR_PHY, "(%d.%d) gNB is waiting for SRS, id = %i\n", frame_rx, slot_rx, i);
 
         start_meas(&gNB->rx_srs_stats);
 
@@ -1020,7 +1020,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         }
         srs_indication->report_type = srs_pdu->srs_parameters_v4.report_type[0];
 
-#ifdef SRS_IND_DEBUG
+// #ifdef SRS_IND_DEBUG
         LOG_I(NR_PHY, "gNB->UL_INFO.srs_ind.sfn = %i\n", gNB->UL_INFO.srs_ind.sfn);
         LOG_I(NR_PHY, "gNB->UL_INFO.srs_ind.slot = %i\n", gNB->UL_INFO.srs_ind.slot);
         LOG_I(NR_PHY, "srs_indication->rnti = %04x\n", srs_indication->rnti);
@@ -1028,7 +1028,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
         LOG_I(NR_PHY, "srs_indication->timing_advance_offset_nsec = %i\n", srs_indication->timing_advance_offset_nsec);
         LOG_I(NR_PHY, "srs_indication->srs_usage = %i\n", srs_indication->srs_usage);
         LOG_I(NR_PHY, "srs_indication->report_type = %i\n", srs_indication->report_type);
-#endif
+// #endif
 
         nfapi_srs_report_tlv_t *report_tlv = &srs_indication->report_tlv;
         report_tlv->tag = 0;
@@ -1045,20 +1045,20 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
             nr_srs_bf_report.num_reported_symbols = 1 << srs_pdu->num_symbols;
             fill_srs_reported_symbol_list(&nr_srs_bf_report.prgs, srs_pdu, frame_parms->N_RB_UL, snr_per_rb, srs_est);
 
-#ifdef SRS_IND_DEBUG
+// #ifdef SRS_IND_DEBUG
             LOG_I(NR_PHY, "nr_srs_bf_report.prg_size = %i\n", nr_srs_bf_report.prg_size);
             LOG_I(NR_PHY, "nr_srs_bf_report.num_symbols = %i\n", nr_srs_bf_report.num_symbols);
             LOG_I(NR_PHY, "nr_srs_bf_report.wide_band_snr = %i (%i dB)\n", nr_srs_bf_report.wide_band_snr, (nr_srs_bf_report.wide_band_snr >> 1) - 64);
             LOG_I(NR_PHY, "nr_srs_bf_report.num_reported_symbols = %i\n", nr_srs_bf_report.num_reported_symbols);
-            LOG_I(NR_PHY, "nr_srs_bf_report.prgs[0].num_prgs = %i\n", nr_srs_bf_report.prgs[0].num_prgs);
-            for (int prg_idx = 0; prg_idx < nr_srs_bf_report.prgs[0].num_prgs; prg_idx++) {
+            LOG_I(NR_PHY, "nr_srs_bf_report.prgs[0].num_prgs = %i\n", nr_srs_bf_report.prgs.num_prgs);
+            for (int prg_idx = 0; prg_idx < nr_srs_bf_report.prgs.num_prgs; prg_idx++) {
               LOG_I(NR_PHY,
-                    "nr_srs_beamforming_report.prgs[0].prg_list[%3i].rb_snr = %i (%i dB)\n",
+                    "nr_srs_beamforming_report.prgs.prg_list[%3i].rb_snr = %i (%i dB)\n",
                     prg_idx,
-                     nr_srs_bf_report.prgs[0].prg_list[prg_idx].rb_snr,
-                    (nr_srs_bf_report.prgs[0].prg_list[prg_idx].rb_snr >> 1) - 64);
+                     nr_srs_bf_report.prgs.prg_list[prg_idx].rb_snr,
+                    (nr_srs_bf_report.prgs.prg_list[prg_idx].rb_snr >> 1) - 64);
             }
-#endif
+// #endif
 
             report_tlv->length = pack_nr_srs_beamforming_report(&nr_srs_bf_report, report_tlv->value, sizeof(report_tlv->value));
             stop_meas(&gNB->srs_beam_report_stats);

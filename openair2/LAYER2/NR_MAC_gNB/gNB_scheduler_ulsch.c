@@ -692,10 +692,12 @@ void nr_rx_sdu(const module_id_t gnb_mod_idP,
     /* we don't know this UE (yet). Check whether there is a ongoing RA (Msg 3)
      * and check the corresponding UE's RNTI match, in which case we activate
      * it. */
+    // LOG_I(NR_MAC,"AAAAA\n");
     for (int i = 0; i < NR_NB_RA_PROC_MAX; ++i) {
       NR_RA_t *ra = &gNB_mac->common_channels[CC_idP].ra[i];
       if (ra->state != WAIT_Msg3)
         continue;
+    // LOG_I(NR_MAC,"bbbbb\n");
       
       if(no_sig) {
         LOG_D(NR_MAC, "Random Access %i failed at state %i (no signal)\n", i, ra->state);
@@ -704,13 +706,13 @@ void nr_rx_sdu(const module_id_t gnb_mod_idP,
 
         // random access pusch with TC-RNTI
         if (ra->rnti != current_rnti) {
-          LOG_D(NR_MAC,
+          LOG_I(NR_MAC,
                 "expected TC_RNTI %04x to match current RNTI %04x\n",
                 ra->rnti,
                 current_rnti);
 
           if( (frameP==ra->Msg3_frame) && (slotP==ra->Msg3_slot) ) {
-            LOG_D(NR_MAC, "Random Access %i failed at state %i (TC_RNTI %04x RNTI %04x)\n", i, ra->state,ra->rnti,current_rnti);
+            LOG_I(NR_MAC, "Random Access %i failed at state %i (TC_RNTI %04x RNTI %04x)\n", i, ra->state,ra->rnti,current_rnti);
             nr_clear_ra_proc(gnb_mod_idP, CC_idP, frameP, ra);
           }
 

@@ -438,6 +438,7 @@ void tci_handling(NR_UE_info_t *UE, frame_t frame, slot_t slot) {
   //extracting the ssb indexes
   for (ssb_idx = 0; ssb_idx < nr_ssbri_cri; ssb_idx++) {
     ssb_index[idx * nb_of_csi_ssb_report + ssb_idx] = sched_ctrl->CSI_report.ssb_cri_report.CRI_SSBRI[ssb_idx];
+    LOG_I(NR_PHY, "SSB index %d : RSRP: %d\n", ssb_idx, sched_ctrl->CSI_report.ssb_cri_report.CRI_SSBRI[ssb_idx]);
   }
 
   //if strongest measured RSRP is configured

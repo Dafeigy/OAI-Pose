@@ -25,7 +25,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
-#include <time.h>
+#include <sys/time.h>
 #include <pthread.h>
 
 #include "nr_ul_estimation.h"
@@ -48,7 +48,7 @@
 #define TRANSPORT_ADDR "192.168.0.139"
 #define TRANSPORT_PORT 7776
 // #define DO_PROTO
-#define DO_LOCAL
+// #define DO_LOCAL
 
 
 #define NO_INTERP 1
@@ -197,7 +197,7 @@ int nr_pusch_channel_estimation(PHY_VARS_gNB *gNB,
 #ifdef DEBUG_PUSCH
 
   for (int i = 0; i < (6 * nb_rb_pusch); i++) {
-    LOG_I(PHY, "In %s: %d + j*(%d)\n", __FUNCTION__, pilot[i].r,pilot[i].i);
+    LOG_I(PHY, "In %s: pilot[%d]: %d + j*(%d)\n", __FUNCTION__, i, pilot[i].r,pilot[i].i);
   }
 
 #endif
@@ -309,7 +309,12 @@ int nr_pusch_channel_estimation(PHY_VARS_gNB *gNB,
 #ifdef DEBUG_PUSCH
           re_offset = (k0 + (n << 2) + (k_line << 1)) % symbolSize;
           c16_t *rxF = &rxdataF[soffset + re_offset];
-          printf("ch -> (%4d,%4d), ch_inter -> (%4d,%4d)\n", ul_ls_est[k].r, ul_ls_est[k].i, ul_ch[k].r, ul_ch[k].i);
+          if ((n+1) % 12 ==0){
+            LOG_I(PHY, "RB: %d k : %d, ul_est: ( %d, %d), channel: ( %d, %d)\n" ,
+            n, k, ul_ls_est[k].r, ul_ls_est[k].i, ul_ch[k].r, ul_ch[k].i);
+          }
+          
+          // printf("ch -> (%4d,%4d), ch_inter -> (%4d,%4d)\n", ul_ls_est[k].r, ul_ls_est[k].i, ul_ch[k].r, ul_ch[k].i);
 #endif
           pilot_cnt++;
           nest_count += 2;
@@ -697,6 +702,8 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   static int64_t ul_est_cnt = 0;
   static char filename[100];
   static char filepath[100];
+  static char time_filename[100];
+  static char time_filepath[100];
   #ifdef DO_LOCAL
   if (ul_est_cnt == 0){
     time_t rawtime;
@@ -704,16 +711,28 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     
-    strftime(filename, sizeof(filename), "%Y-%m-%d_%H-%M-%S.log", timeinfo);
+    strftime(filename, sizeof(filename), "%Y-%m-%d_%H-%M-%S-data.log", timeinfo);
+    strftime(time_filename, sizeof(time_filename), "%Y-%m-%d_%H-%M-%S-time.log", timeinfo);
     
   }
   sprintf(filepath, "../logs/%s", filename);
+
   FILE *file = fopen(filepath, "a");
+  
     if (file == NULL) {
         printf("Failed to Open file.\n");
         return 1;
     }
-    printf("File %s has been generated sucessfully.\n", filepath);  
+    printf("File %s has been generated sucessfully.\n", filepath); 
+
+  sprintf(time_filepath, "../logs/%s", time_filename);
+  FILE *time_file = fopen(time_filepath, "a");
+  
+    if (time_file == NULL) {
+        printf("Failed to Open file.\n");
+        return 1;
+    }
+    printf("File %s has been generated sucessfully.\n", time_filepath);  
     
   #endif
   ul_est_cnt ++;
@@ -786,7 +805,7 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
 // #ifdef SRS_DEBUG
       LOG_I(NR_PHY,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
 #ifdef DO_LOCAL
-      fprintf(file,"====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
+      fprintf(file,"\n====================== UE port %d --> gNB Rx antenna %i ======================\n", p_index, ant);
 #endif
 // #endif
 
@@ -1099,11 +1118,12 @@ int nr_srs_channel_estimation(const PHY_VARS_gNB *gNB,
   gettimeofday(&end_time, NULL);
   // |FUNC_CNT|ThreadID|StartTime|EndTime|Duration|
   LOG_I(NR_PHY,"|FUNC_CNT|ThreadID|StartTime|EndTime|Duration|\n");
-  LOG_I(NR_PHY,"|%6d|%d|%d|%9d|%d|\n",ul_est_cnt,threadID,start_time.tv_usec + start_time.tv_sec * 1000000,end_time.tv_usec + end_time.tv_sec * 1000000,end_time.tv_usec-start_time.tv_usec);
+  LOG_I(NR_PHY,"|%6d|%d|%d.%d|%d.%d|%d|\n",ul_est_cnt,threadID,start_time.tv_sec,start_time.tv_usec,end_time.tv_sec,end_time.tv_usec,end_time.tv_usec-start_time.tv_usec);
   
 #ifdef DO_LOCAL
-  fprintf(file,"'FUNC_CNT':%d,'ThreadID':%d,'StartTime':%d,'EndTime':%d\n",ul_est_cnt,threadID,start_time.tv_usec + start_time.tv_sec * 1000000,end_time.tv_usec + end_time.tv_sec * 1000000);
+  fprintf(time_file,"'FUNC_CNT':%d,'ThreadID':%d,'StartTime':%d.%d,'EndTime':%d.%d}\n",ul_est_cnt,threadID,start_time.tv_sec,start_time.tv_usec, end_time.tv_sec, end_time.tv_usec);
   fclose(file);
+  fclose(time_file);
 #endif
   return 0;
   

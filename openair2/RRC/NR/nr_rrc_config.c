@@ -413,6 +413,7 @@ static struct NR_SRS_Resource__resourceType__periodic *configure_periodic_srs(co
   const int n_slots_period = tdd ? n_slots_frame/get_nb_periods_per_frame(tdd->dl_UL_TransmissionPeriodicity) : n_slots_frame;
   const int first_full_ul_slot = n_slots_period - ul_slots_period;
   // const int ideal_period = n_slots_period * MAX_MOBILES_PER_GNB;
+  // [SRS period change in here]
   const int ideal_period = 160;
   struct NR_SRS_Resource__resourceType__periodic *periodic_srs = calloc(1,sizeof(*periodic_srs));
   if (ideal_period < 5) {
@@ -549,6 +550,8 @@ static void config_srs(const NR_ServingCellConfigCommon_t *scc,
     srs_resset0->resourceType.choice.aperiodic->ext1 = NULL;
   }
   srs_resset0->usage=NR_SRS_ResourceSet__usage_codebook;
+  // [N310-SRS] 修改SRS用途,但非常失败
+  // srs_resset0->usage = NR_SRS_ResourceSet__usage_beamManagement;
   
   srs_resset0->alpha = calloc(1,sizeof(*srs_resset0->alpha));
   *srs_resset0->alpha = NR_Alpha_alpha1;

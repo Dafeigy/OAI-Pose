@@ -186,7 +186,6 @@ void handle_nr_ulsch(NR_UL_IND_t *UL_info)
       LOG_D(NR_PHY, "UL_info->crc_ind.pdu_list[%d].rnti:%04x "
                     "UL_info->rx_ind.pdu_list[%d].rnti:%04x\n",
                     i, crc->rnti, i, rx->rnti);
-
       AssertFatal(crc->rnti == rx->rnti, "mis-match between CRC RNTI %04x and RX RNTI %04x\n",
                   crc->rnti, rx->rnti);
 

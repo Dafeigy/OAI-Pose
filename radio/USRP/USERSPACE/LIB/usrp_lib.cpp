@@ -1229,7 +1229,7 @@ extern "C" {
       case 122880000:
         // from usrp_time_offset
         //openair0_cfg[0].samples_per_packet    = 2048;
-        openair0_cfg[0].tx_sample_advance     = 15; //to be checked
+        openair0_cfg[0].tx_sample_advance     = 10; //to be checked
         openair0_cfg[0].tx_bw                 = 80e6;
         openair0_cfg[0].rx_bw                 = 80e6;
         break;
@@ -1461,17 +1461,18 @@ extern "C" {
   /* Setting TX/RX BW after streamers are created due to USRP calibration issue */
   // N310 with UHD >= 4.2.0 has issues with changing the BW, which is a NOP on N310 in earlier versions
   // see also: https://github.com/EttusResearch/uhd/issues/644
+  
   if (device->type != USRP_N300_DEV) {
+  // if (device->type == USRP_N300_DEV) {
     for(int i=0; i<((int) s->usrp->get_tx_num_channels()) && i<openair0_cfg[0].tx_num_channels; i++)
       s->usrp->set_tx_bandwidth(openair0_cfg[0].tx_bw,i+choffset);
-
     for(int i=0; i<((int) s->usrp->get_rx_num_channels()) && i<openair0_cfg[0].rx_num_channels; i++)
       s->usrp->set_rx_bandwidth(openair0_cfg[0].rx_bw,i+choffset);
   }
 
   for (int i=0; i<openair0_cfg[0].rx_num_channels; i++) {
     LOG_I(HW,"RX Channel %d\n",i);
-    LOG_I(HW,"  Actual RX sample rate: %fMSps...\n",s->usrp->get_rx_rate(i+choffset)/1e6);
+    LOG_I(HW,"  RX sample rate: %fMSps...\n",s->usrp->get_rx_rate(i+choffset)/1e6);
     LOG_I(HW,"  Actual RX frequency: %fGHz...\n", s->usrp->get_rx_freq(i+choffset)/1e9);
     LOG_I(HW,"  Actual RX gain: %f...\n", s->usrp->get_rx_gain(i+choffset));
     LOG_I(HW,"  Actual RX bandwidth: %fM...\n", s->usrp->get_rx_bandwidth(i+choffset)/1e6);
