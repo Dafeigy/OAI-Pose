@@ -63,3 +63,13 @@ sudo ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --ue-fo-comp
 ```bash
 sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/162PRB.4x4.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
 ```
+
+## B210 
+```bash
+sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1 -E
+```
+## N310 13900K
+
+```bash
+sudo ./ran_build/build/nr-softmodem -O ../band78-106.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
+```
