@@ -73,3 +73,12 @@ sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/g
 ```bash
 sudo ./ran_build/build/nr-softmodem -O ../band78-106.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
 ```
+
+## RFSIM display
+```bash
+# For gNB, run"
+sudo ./nr-softmodem -O ../../../band78-106.conf --gNBs.[0].min_rxtxtime 6 --rfsim --phy-test
+
+# For nrUE, run:
+sudo RFSIMULATOR=127.0.0.1 ./nr-uesoftmodem -r 106 --numerology 1 --band 78 -C 3619200000 --nokrnmod --rfsim --phy-test
+```
