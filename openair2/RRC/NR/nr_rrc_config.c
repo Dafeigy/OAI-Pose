@@ -414,7 +414,7 @@ static struct NR_SRS_Resource__resourceType__periodic *configure_periodic_srs(co
   const int first_full_ul_slot = n_slots_period - ul_slots_period;
   // const int ideal_period = n_slots_period * MAX_MOBILES_PER_GNB;
   // [SRS period change in here]
-  const int ideal_period = 160;
+  const int ideal_period = 80;
   struct NR_SRS_Resource__resourceType__periodic *periodic_srs = calloc(1,sizeof(*periodic_srs));
   if (ideal_period < 5) {
     periodic_srs->periodicityAndOffset_p.present = NR_SRS_PeriodicityAndOffset_PR_sl4;

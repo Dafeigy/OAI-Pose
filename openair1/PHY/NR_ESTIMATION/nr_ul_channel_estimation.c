@@ -45,10 +45,12 @@
 //#define DEBUG_PUSCH
 // #define SRS_DEBUG
 #include "MESSAGES/ul_srs_est.pb-c.h"
-#define TRANSPORT_ADDR "192.168.0.108"
+#define TRANSPORT_ADDR "192.168.0.19"
+// #define TRANSPORT_ADDR "192.168.0.108"
+// #define TRANSPORT_ADDR "192.168.0.107"
 #define TRANSPORT_PORT 7776
-#define DO_PROTO
-// #define DO_LOCAL
+// #define DO_PROTO
+#define DO_LOCAL
 
 
 #define NO_INTERP 1

@@ -1,6 +1,5 @@
 syntax = "proto2";
 package NRpose;
-// 防止出问题用了NRPose的package 标识一下这是SONY项目的
 
 message NR_SRS_PACK{
   repeated NR_SRS_INFO ESTIMATION = 1;

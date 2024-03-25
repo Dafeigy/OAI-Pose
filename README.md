@@ -71,5 +71,5 @@ sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/g
 ## N310 13900K
 
 ```bash
-sudo ./ran_build/build/nr-softmodem -O ../band78-106.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
+sudo ./ran_build/build/nr-softmodem -O ../band78-106.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1 --tune-offset 20000000
 ```
