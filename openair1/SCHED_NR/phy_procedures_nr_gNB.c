@@ -43,9 +43,18 @@
 #include "assertions.h"
 
 #include <time.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <sys/time.h>
+#include <pthread.h>
 
-#define DO_PROTO
-// #define DO_LOCAL
+// #define DO_PROTO
+#define DO_LOCAL
+
+
 #include "MESSAGES/channel_matrix.pb-c.h"
 #ifdef DO_PROTO
 
@@ -1091,10 +1100,53 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                                     nr_srs_channel_iq_matrix.num_prgs,
                                     &gNB->frame_parms,
                                     srs_estimated_channel_freq);
-#ifdef DO_PROTO
-            // [SRS MATRIX PROTO LOGIC START HERE]
+
+            static int64_t ul_est_cnt = 0;
+            static char filename[100];
+            static char filepath[100];
+            static char time_filename[100];
+            static char time_filepath[100];
+            #ifdef DO_LOCAL
+            if (ul_est_cnt == 0){
+              time_t rawtime;
+              struct tm *timeinfo;
+              time(&rawtime);
+              timeinfo = localtime(&rawtime);
+              
+              strftime(filename, sizeof(filename), "%Y-%m-%d_%H-%M-%S-data.log", timeinfo);
+              strftime(time_filename, sizeof(time_filename), "%Y-%m-%d_%H-%M-%S-time.log", timeinfo);
+              
+            }
+            sprintf(filepath, "../logs/%s", filename);
+
+            FILE *file = fopen(filepath, "a");
+            
+              if (file == NULL) {
+                  printf("Failed to Open file.\n");
+                  return 1;
+              }
+              // printf("File %s has been generated sucessfully.\n", filepath); 
+
+            sprintf(time_filepath, "../logs/%s", time_filename);
+            FILE *time_file = fopen(time_filepath, "a");
+            
+              if (time_file == NULL) {
+                  printf("Failed to Open file.\n");
+                  return 1;
+              }
+              // printf("File %s has been generated sucessfully.\n", time_filepath);  
+              
+            #endif
+            ul_est_cnt ++;
             c16_t *channel_matrix16 = (c16_t *)nr_srs_channel_iq_matrix.channel_matrix;
             c8_t *channel_matrix8 = (c8_t *)nr_srs_channel_iq_matrix.channel_matrix;
+            pthread_t threadID = pthread_self();
+            struct  timeval start_time;
+            struct  timeval end_time;
+            gettimeofday(&start_time, NULL);
+#ifdef DO_PROTO
+            // [SRS MATRIX PROTO LOGIC START HERE]
+            
             NRMatrix__NRSRSPACK* channel_matrix_list;
             channel_matrix_list = malloc(sizeof(NRMatrix__NRSRSPACK));
             nrmatrix__nr__srs__pack__init(channel_matrix_list);
@@ -1104,44 +1156,58 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                                   * nr_srs_channel_iq_matrix.num_ue_srs_ports 
                                   * nr_srs_channel_iq_matrix.num_gnb_antenna_elements
                                   * nr_srs_channel_iq_matrix.num_prgs);
+#endif
+
             // [START Iteration]
             for (int uI = 0; uI < nr_srs_channel_iq_matrix.num_ue_srs_ports; uI++) {
               for (int gI = 0; gI < nr_srs_channel_iq_matrix.num_gnb_antenna_elements; gI++) {
-              
+#ifdef DO_LOCAL
+              fprintf(file,"\n====================== UE port %d --> gNB Rx antenna %i ======================\n", uI, gI);
+#endif
+#ifdef DO_PROTO
               NRMatrix__NRSRSINFO * srs_channel_matrix;
               srs_channel_matrix = malloc(sizeof(NRMatrix__NRSRSINFO));
               nrmatrix__nr__srs__info__init(srs_channel_matrix);
               srs_channel_matrix->n_prb_item = nr_srs_channel_iq_matrix.num_prgs;
               NRMatrix__RESULT ** matrix_elements;
               matrix_elements = malloc(sizeof(matrix_elements) * nr_srs_channel_iq_matrix.num_prgs);
-                
+#endif                
                 for (int pI = 0; pI < nr_srs_channel_iq_matrix.num_prgs; pI++) {
                   uint16_t index =
                       uI * nr_srs_channel_iq_matrix.num_gnb_antenna_elements * nr_srs_channel_iq_matrix.num_prgs + gI * nr_srs_channel_iq_matrix.num_prgs + pI;
-                  
+#ifdef DO_PROTO                  
                   NRMatrix__RESULT * matrix_element;
                   matrix_element =malloc(sizeof(NRMatrix__RESULT));
                   nrmatrix__result__init(matrix_element);
                   matrix_element->real = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r;
                   matrix_element->image = nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i;
                   matrix_elements[pI] = matrix_element;
-
+#endif
+#ifdef DO_LOCAL
                   // [This is for local collection]
-                  LOG_I(NR_PHY,
-                        "(uI %i, gI %i, pI %i) channel_matrix --> real %i, imag %i\n",
-                        uI,
-                        gI,
-                        pI,
-                        nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r,
-                        nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
+                  fprintf(file,"{'re':%d,'im':%d},",
+                  nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r, 
+                  nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
+                  // LOG_I(NR_PHY,
+                  //       "(uI %i, gI %i, pI %i) channel_matrix --> real %i, imag %i\n",
+                  //       uI,
+                  //       gI,
+                  //       pI,
+                  //       nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].r : channel_matrix16[index].r,
+                  //       nr_srs_channel_iq_matrix.normalized_iq_representation == 0 ? channel_matrix8[index].i : channel_matrix16[index].i);
+#endif                        
                 }
               // [Matrix results store in here]
+#ifdef DO_PROTO
               srs_channel_matrix->prb_item = matrix_elements;
               channel_data[uI*nr_srs_channel_iq_matrix.num_gnb_antenna_elements + gI] = srs_channel_matrix;
+#endif
               }
             }
+#ifdef DO_PROTO            
             channel_matrix_list->matrix = channel_data;
-
+#endif
+#ifdef DO_PROTO
 
   // Socket Send Protobuf
   int length = nrmatrix__nr__srs__pack__get_packed_size(channel_matrix_list);
@@ -1160,6 +1226,16 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
   close(sockfd);
   free(channel_data);
   LOG_I(NR_PHY,"Successfully send data.");
+#endif
+  gettimeofday(&end_time, NULL);
+  // |FUNC_CNT|ThreadID|StartTime|EndTime|Duration|
+  LOG_I(NR_PHY,"|FUNC_CNT|ThreadID|StartTime|EndTime|Duration|\n");
+  LOG_I(NR_PHY,"|%6d|%d|%d.%d|%d.%d|%d|\n",ul_est_cnt,threadID,start_time.tv_sec,start_time.tv_usec,end_time.tv_sec,end_time.tv_usec,end_time.tv_usec-start_time.tv_usec);
+  
+#ifdef DO_LOCAL
+  fprintf(time_file,"'FUNC_CNT':%d,'ThreadID':%d,'StartTime':%d.%d,'EndTime':%d.%d}\n",ul_est_cnt,threadID,start_time.tv_sec,start_time.tv_usec, end_time.tv_sec, end_time.tv_usec);
+  fclose(file);
+  fclose(time_file);
 #endif
 #ifdef SRS_IND_DEBUG
             LOG_I(NR_PHY, "nr_srs_channel_iq_matrix.normalized_iq_representation = %i\n", nr_srs_channel_iq_matrix.normalized_iq_representation);
