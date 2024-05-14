@@ -57,7 +57,6 @@
 
 #include "MESSAGES/channel_matrix.pb-c.h"
 #ifdef DO_PROTO
-
   #define TRANSPORT_ADDR "172.17.64.1"
   #define TRANSPORT_PORT 7776
 #endif
@@ -1106,7 +1105,8 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
             static char filepath[100];
             static char time_filename[100];
             static char time_filepath[100];
-            #ifdef DO_LOCAL
+
+#ifdef DO_LOCAL
             if (ul_est_cnt == 0){
               time_t rawtime;
               struct tm *timeinfo;
@@ -1117,7 +1117,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
               strftime(time_filename, sizeof(time_filename), "%Y-%m-%d_%H-%M-%S-time.log", timeinfo);
               
             }
-            sprintf(filepath, "../logs/%s", filename);
+            sprintf(filepath, "../../../logs/%s", filename);
 
             FILE *file = fopen(filepath, "a");
             
@@ -1125,18 +1125,18 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
                   printf("Failed to Open file.\n");
                   return 1;
               }
-              // printf("File %s has been generated sucessfully.\n", filepath); 
+              printf("File %s has been generated sucessfully.\n", filepath); 
 
-            sprintf(time_filepath, "../logs/%s", time_filename);
+            sprintf(time_filepath, "../../../logs/%s", time_filename);
             FILE *time_file = fopen(time_filepath, "a");
             
               if (time_file == NULL) {
                   printf("Failed to Open file.\n");
                   return 1;
               }
-              // printf("File %s has been generated sucessfully.\n", time_filepath);  
+              printf("File %s has been generated sucessfully.\n", time_filepath);  
               
-            #endif
+#endif
             ul_est_cnt ++;
             c16_t *channel_matrix16 = (c16_t *)nr_srs_channel_iq_matrix.channel_matrix;
             c8_t *channel_matrix8 = (c8_t *)nr_srs_channel_iq_matrix.channel_matrix;
