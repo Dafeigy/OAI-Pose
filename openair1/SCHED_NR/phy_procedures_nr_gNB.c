@@ -57,7 +57,7 @@
 
 #include "MESSAGES/channel_matrix.pb-c.h"
 #ifdef DO_PROTO
-  #define TRANSPORT_ADDR "192.168.0.19"
+  #define TRANSPORT_ADDR "192.168.0.107"
   #define TRANSPORT_PORT 7776
 #endif
 //#define DEBUG_RXDATA
