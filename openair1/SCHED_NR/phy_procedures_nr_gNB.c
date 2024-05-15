@@ -51,13 +51,13 @@
 #include <sys/time.h>
 #include <pthread.h>
 
-// #define DO_PROTO
+#define DO_PROTO
 #define DO_LOCAL
 
 
 #include "MESSAGES/channel_matrix.pb-c.h"
 #ifdef DO_PROTO
-  #define TRANSPORT_ADDR "172.17.64.1"
+  #define TRANSPORT_ADDR "192.168.0.19"
   #define TRANSPORT_PORT 7776
 #endif
 //#define DEBUG_RXDATA
@@ -1117,7 +1117,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
               strftime(time_filename, sizeof(time_filename), "%Y-%m-%d_%H-%M-%S-time.log", timeinfo);
               
             }
-            sprintf(filepath, "../../../logs/%s", filename);
+            sprintf(filepath, "../logs/%s", filename);
 
             FILE *file = fopen(filepath, "a");
             
@@ -1127,7 +1127,7 @@ int phy_procedures_gNB_uespec_RX(PHY_VARS_gNB *gNB, int frame_rx, int slot_rx)
               }
               printf("File %s has been generated sucessfully.\n", filepath); 
 
-            sprintf(time_filepath, "../../../logs/%s", time_filename);
+            sprintf(time_filepath, "../logs/%s", time_filename);
             FILE *time_file = fopen(time_filepath, "a");
             
               if (time_file == NULL) {

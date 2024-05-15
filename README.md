@@ -73,3 +73,8 @@ sudo ./ran_build/build/nr-softmodem -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/g
 ```bash
 sudo ./ran_build/build/nr-softmodem -O ../band78-106.conf --gNBs.[0].min_rxtxtime 6 --sa --usrp-tx-thread-config 1
 ```
+
+## DATA COLLECTION
+
+|------- R -------|------- L-------|------- L -------|------- R -------|
+|---Start Stand---|---Start Fall---|---Lying on bed--|-----End Fall----|
