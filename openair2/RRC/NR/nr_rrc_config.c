@@ -621,7 +621,8 @@ static void config_srs(const NR_ServingCellConfigCommon_t *scc,
   srs_res0->freqDomainShift = 0;
   srs_res0->freqHopping.b_SRS = 0;
   srs_res0->freqHopping.b_hop = 0;
-  srs_res0->freqHopping.c_SRS = rrc_get_max_nr_csrs(curr_bwp, srs_res0->freqHopping.b_SRS);
+  // srs_res0->freqHopping.c_SRS = rrc_get_max_nr_csrs(curr_bwp, srs_res0->freqHopping.b_SRS);
+  srs_res0->freqHopping.c_SRS = 62;
   srs_res0->groupOrSequenceHopping = NR_SRS_Resource__groupOrSequenceHopping_neither;
   if (do_srs) {
     srs_res0->resourceType.present = NR_SRS_Resource__resourceType_PR_periodic;
