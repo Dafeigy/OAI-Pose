@@ -78,3 +78,6 @@ sudo ./ran_build/build/nr-softmodem -O ../band78-106.conf --gNBs.[0].min_rxtxtim
 
 |------- R -------|------- L-------|------- L -------|------- R -------|
 |---Start Stand---|---Start Fall---|---Lying on bed--|-----End Fall----|
+
+## Data Process Scripts:
+See NR-FALL-data processing

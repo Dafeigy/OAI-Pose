@@ -3,7 +3,7 @@ import time
 import os
 
 
-INDEX = 6
+INDEX = 7
 DATA_ROOT = "CLICKTIME"
 counter = 1
 

@@ -26,3 +26,5 @@ nfapi_nr_interface_scf
 # protobuf source code 
 protobuf
 protobuf-c
+
+*.txt

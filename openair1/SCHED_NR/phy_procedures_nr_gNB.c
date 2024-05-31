@@ -52,7 +52,7 @@
 #include <pthread.h>
 
 #define DO_PROTO
-#define DO_LOCAL
+// #define DO_LOCAL
 
 
 #include "MESSAGES/channel_matrix.pb-c.h"
